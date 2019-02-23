@@ -1,0 +1,3 @@
+*.sublime-*
+
+.vault_pass*.txt
