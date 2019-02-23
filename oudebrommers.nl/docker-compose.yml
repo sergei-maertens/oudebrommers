@@ -1,0 +1,31 @@
+---
+
+version: '3.4'
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: supersecret
+      MYSQL_USER: oudebro
+      MYSQL_PASSWORD: letmein
+      MYSQL_DATABASE: oudebro
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  wordpress:
+    build:
+      context: ./
+    ports:
+      - "9000:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: oudebro
+      WORDPRESS_DB_PASSWORD: letmein
+      WORDPRESS_DB_NAME: oudebro
+    # volumes:
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
