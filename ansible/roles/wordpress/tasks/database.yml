@@ -6,8 +6,11 @@
   mysql_user:
     name: "{{ db[domain].user }}"
     password: "{{ db[domain].password }}"
-    host: localhost
+    host: "{{ item }}"
     state: present
+  with_items:
+    - localhost
+    - "{{ db.host }}"
   remote_user: root
 
 - name: Create database

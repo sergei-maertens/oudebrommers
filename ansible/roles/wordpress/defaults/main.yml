@@ -1,0 +1,5 @@
+---
+
+wp_image: wordpress:5.0-php7.3-apache
+wp_content_volume_name: "{{ domain }}_wp-content"
+wp_container_name: "wp-{{ domain }}"

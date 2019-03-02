@@ -2,3 +2,25 @@
 
 # Ensure the correct containers with volume mounts and port mapping are running
 
+- name: Create the WP-uploads volume
+  docker_volume:
+    name: "{{ wp_content_volume_name }}"
+  remote_user: root
+
+- name: Ensure the WP container runs
+  docker_container:
+    name: "{{ wp_container_name }}"
+    image: "{{ wp_image }}"
+    state: started
+    restart: no
+    restart_policy: always
+    env:
+      WORDPRESS_DB_HOST: "{{ db.host }}"
+      WORDPRESS_DB_USER: "{{ db[domain].user }}"
+      WORDPRESS_DB_PASSWORD: "{{ db[domain].password }}"
+      WORDPRESS_DB_NAME: "{{ db[domain].name }}"
+    volumes:
+      - "wp_content_volume_name:/var/www/html/wp-content/"
+    ports:
+      - "{{ port_mapping[domain].to }}:{{ port_mapping[domain].from }}"
+  remote_user: root
