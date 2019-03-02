@@ -1,0 +1,23 @@
+---
+
+# Ensure the database exists
+
+- name: Create database user
+  mysql_user:
+    name: "{{ db[domain].user }}"
+    password: "{{ db[domain].password }}"
+    host: localhost
+    state: present
+  remote_user: root
+
+- name: Create database
+  mysql_db:
+    name: "{{ db[domain].name }}"
+    state: present
+  remote_user: root
+
+- name: Grant db user privileges
+  mysql_user:
+    name: "{{ db[domain].user }}"
+    priv: "{{ db[domain].name }}.*:ALL"
+  remote_user: root

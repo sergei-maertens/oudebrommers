@@ -3,6 +3,9 @@
 - name: Deploy the oudebrommers app containers
   hosts: web
   remote_user: oudebro
+  vars:
+    domain: oudebrommers.nl
   roles:
+    - wordpress
     - nginx
   become_method: su

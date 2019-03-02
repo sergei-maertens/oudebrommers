@@ -1,22 +1,16 @@
-# Ansible generated virtual host
-
-# Root and www
-
-upstream {{ user }}_{{ env }}_django {
-    server 127.0.0.1:{{ uwsgi.port }};
-}
+# Ansible generated virtual host for {{ domain }}
 
 # server {
 #     listen 80;
-#     server_name {{ server.name }}
-#                 {{ server.aliases|join(' ') }};
-#     return 301 https://{{ server.name }}$request_uri;
+#     server_name {{ server[domain].name }}
+#                 {{ server[domain].aliases|join(' ') }};
+#     return 301 https://{{ server[domain].name }}$request_uri;
 # }
 
 server {
     listen       80;
-    server_name {{ server.name }}
-                {{ server.aliases|join(' ') }};
+    server_name {{ server[domain].name }}
+                {{ server[domain].aliases|join(' ') }};
     error_log /var/log/nginx/{{ user }}.{{ env }}/error.log warn;
     access_log  /var/log/nginx/{{ user }}.{{ env }}/access.log main;
 
@@ -61,26 +55,29 @@ server {
     }
 
     location / {
-        uwsgi_pass {{ user }}_{{ env }}_django;
-        include uwsgi_params;
+        proxy_set_header X-Real-IP  $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header Host $host;
+        proxy_pass http://127.0.0.1:{{ port_mapping[domain].to }};
+        proxy_redirect off;
     }
 
-    location /favicon.ico {
-        alias {{ docroot }}/favicon.ico;
-        expires max;
-    }
+    # location /favicon.ico {
+    #     alias {{ docroot }}/favicon.ico;
+    #     expires max;
+    # }
 
-    location /static/ {
-        expires max;
-        root {{ ansible_env.HOME }}/django/{{ env }};
-        access_log  /var/log/nginx/{{ user }}.{{ env }}/static.access.log;
-    }
+    # location /static/ {
+    #     expires max;
+    #     root {{ ansible_env.HOME }}/django/{{ env }};
+    #     access_log  /var/log/nginx/{{ user }}.{{ env }}/static.access.log;
+    # }
 
-    location /media/ {
-        expires 30d;
-        root {{ ansible_env.HOME }}/django/{{ env }};
-        access_log  /var/log/nginx/{{ user }}.{{ env }}/media.access.log;
-    }
+    # location /media/ {
+    #     expires 30d;
+    #     root {{ ansible_env.HOME }}/django/{{ env }};
+    #     access_log  /var/log/nginx/{{ user }}.{{ env }}/media.access.log;
+    # }
 
     error_page 503 @maintenance;
     location @maintenance {
