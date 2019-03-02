@@ -1,0 +1,8 @@
+---
+
+- name: Configure the backups
+  hosts: web
+  remote_user: oudebro
+  roles:
+    - backups
+  become_method: su

@@ -1,0 +1,8 @@
+---
+
+- name: Deploy the oudebrommers app containers
+  hosts: web
+  remote_user: oudebro
+  roles:
+    - nginx
+  become_method: su

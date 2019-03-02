@@ -1,3 +1,6 @@
+# dev environment/IDE
 *.sublime-*
 
+# deployment
 .vault_pass*.txt
+*.retry
