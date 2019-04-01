@@ -1,0 +1,49 @@
+---
+
+# Ensure networking is set up correctly
+
+- name: Allow MySQL client connections from localhost and docker
+  ufw:
+    direction: incoming
+    port: 3306
+    policy: allow
+  with_items:
+    - 127.0.0.1
+    - "{{ docker_bridge_ip }}"
+  notify:
+    - restart ufw
+  remote_user: root
+
+- name: Ensure MySQL listens on the docker bridge IP as well
+  lineinfile:
+    path: /etc/mysql/my.cnf
+    regexp: ^bind-address
+    line: "bind-address   = 0.0.0.0"
+  notify:
+    - restart mysql
+  remote_user: root
+
+- meta: flush_handlers
+
+# Application DB
+
+- name: Create database user
+  mysql_user:
+    name: "{{ db[domain].user }}"
+    password: "{{ db[domain].password }}"
+    host: "%"
+    state: present
+  remote_user: root
+
+- name: Create database
+  mysql_db:
+    name: "{{ db[domain].name }}"
+    state: present
+  remote_user: root
+
+- name: Grant db user privileges
+  mysql_user:
+    name: "{{ db[domain].user }}"
+    host: '%'
+    priv: "{{ db[domain].name }}.*:ALL"
+  remote_user: root

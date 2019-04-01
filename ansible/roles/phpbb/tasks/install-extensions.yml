@@ -1,0 +1,20 @@
+---
+
+- name: Download and extract Dutch language pack
+  unarchive:
+    src: "{{ language_pack_download_url }}"
+    dest: "{{ ansible_env.HOME }}/downloads/"
+    copy: no
+    creates: "{{ ansible_env.HOME }}/downloads/{{ language_pack_dir_name }}"
+
+- name: stat 'languages' folder
+  stat:
+    path: "{{ forum_path }}/language/nl"
+  register: stat_language
+
+- name: Install extracted language
+  command: cp -r '{{ ansible_env.HOME }}/downloads/{{ language_pack_dir_name }}/{{ item }}' {{ forum_path }}/
+  with_items:
+    - language
+    - styles
+  when: not stat_language.stat.exists

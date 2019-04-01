@@ -1,0 +1,6 @@
+---
+
+# Sets up a Wordpress install, as a Docker container using the host-database.
+
+- import_tasks: database.yml
+- import_tasks: containers.yml

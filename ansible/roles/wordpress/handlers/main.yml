@@ -1,0 +1,11 @@
+- name: restart ufw
+  service:
+    name: ufw
+    state: restarted
+  remote_user: root
+
+- name: restart mysql
+  service:
+    name: mysql
+    state: restarted
+  remote_user: root
