@@ -1,6 +1,6 @@
 ---
 
-- name: Deploy the oudebrommers app containers
+- name: Deploy the oudebrommers domain(s)
   hosts: web
   remote_user: oudebro
   vars:
