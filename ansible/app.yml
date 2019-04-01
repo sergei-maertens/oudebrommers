@@ -5,7 +5,10 @@
   remote_user: oudebro
   vars:
     domain: oudebrommers.nl
+    docroot: "{{ ansible_env.HOME }}/public_html/{{ env }}"
   roles:
     - wordpress
+    - apache
+    - phpbb
     - nginx
   become_method: su

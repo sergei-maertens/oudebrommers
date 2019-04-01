@@ -1,0 +1,23 @@
+# Ansible generated virtual host
+
+<VirtualHost 127.0.0.1:8080 >
+
+    ServerName {{ server[domain].name }}
+    ServerAlias {{ server[domain].aliases|join(' ') }}
+    ServerAdmin {{ server[domain].name }}
+    DocumentRoot {{ docroot }}
+
+    <Directory {{ docroot }}>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    Header always append X-Frame-Options SAMEORIGIN
+
+    UseCanonicalName OFF
+
+    # Log configuration
+    CustomLog /var/log/apache2/{{ user }}.{{ env }}/access.bytes bytes
+    CustomLog /var/log/apache2/{{ user }}.{{ env }}/access.log combined
+    ErrorLog /var/log/apache2/{{ user }}.{{ env }}/error.log
+</VirtualHost>
