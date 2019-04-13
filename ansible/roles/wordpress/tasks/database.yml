@@ -13,6 +13,7 @@
   notify:
     - restart ufw
   remote_user: root
+  run_once: yes
 
 - name: Ensure MySQL listens on the docker bridge IP as well
   lineinfile:

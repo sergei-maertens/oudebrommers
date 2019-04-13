@@ -11,8 +11,8 @@ server {
     listen       443;
     server_name {{ server[domain].name }}
                 {{ server[domain].aliases|join(' ') }};
-    error_log /var/log/nginx/{{ user }}.{{ env }}/error.log warn;
-    access_log  /var/log/nginx/{{ user }}.{{ env }}/access.log main;
+    error_log /var/log/nginx/{{ domain }}.{{ env }}/error.log warn;
+    access_log  /var/log/nginx/{{ domain }}.{{ env }}/access.log main;
 
     charset utf-8;
     root {{ docroot }};
@@ -77,13 +77,13 @@ server {
     # location /static/ {
     #     expires max;
     #     root {{ ansible_env.HOME }}/django/{{ env }};
-    #     access_log  /var/log/nginx/{{ user }}.{{ env }}/static.access.log;
+    #     access_log  /var/log/nginx/{{ domain }}.{{ env }}/static.access.log;
     # }
 
     # location /media/ {
     #     expires 30d;
     #     root {{ ansible_env.HOME }}/django/{{ env }};
-    #     access_log  /var/log/nginx/{{ user }}.{{ env }}/media.access.log;
+    #     access_log  /var/log/nginx/{{ domain }}.{{ env }}/media.access.log;
     # }
 
     error_page 503 @maintenance;

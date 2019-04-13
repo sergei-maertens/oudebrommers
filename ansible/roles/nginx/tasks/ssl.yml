@@ -9,7 +9,7 @@
 - name: Send private ssl keys
   copy:
     content: "{{ ssl_private_key }}"
-    dest: /etc/ssl/{{ user }}.key
+    dest: /etc/ssl/{{ domain }}.key
     mode: 0600
     owner: root
     group: root
@@ -18,8 +18,8 @@
 
 - name: Copy ssl keys and certs
   copy:
-    src: wildcard.{{ user }}.crt
-    dest: /etc/ssl/wildcard.{{ user }}.crt
+    src: wildcard.{{ domain }}.crt
+    dest: /etc/ssl/wildcard.{{ domain }}.crt
     mode: 0600
     owner: root
     group: root

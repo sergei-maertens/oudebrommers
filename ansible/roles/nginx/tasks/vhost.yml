@@ -10,7 +10,7 @@
 
 - name: Ensure the log directory exists
   file:
-    path: /var/log/nginx/{{ user }}.{{ env }}
+    path: /var/log/nginx/{{ domain }}.{{ env }}
     state: directory
     owner: www-data
     group: www-data
@@ -24,15 +24,15 @@
 - name: Install the Nginx config file
   template:
     src: nginx.conf.j2
-    dest: /etc/nginx/sites-available/{{ user }}.{{ env }}.conf
+    dest: /etc/nginx/sites-available/{{ domain }}.{{ env }}.conf
   remote_user: root
   notify:
     - reload nginx
 
 - name: Ensure the site is enabled (symlink)
   file:
-    src: /etc/nginx/sites-available/{{ user }}.{{ env }}.conf
-    dest: /etc/nginx/sites-enabled/{{ user }}.{{ env }}.conf
+    src: /etc/nginx/sites-available/{{ domain }}.{{ env }}.conf
+    dest: /etc/nginx/sites-enabled/{{ domain }}.{{ env }}.conf
     state: link
   remote_user: root
   notify:

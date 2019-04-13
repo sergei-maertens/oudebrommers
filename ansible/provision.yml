@@ -3,7 +3,7 @@
 # Playbook to set up a new server from scratch
 
 - name: Provision the server
-  hosts: web
+  hosts: all
   remote_user: root
   vars:
     admin_email: "info@regex-it.nl"

@@ -2,4 +2,4 @@
 
 env: staging
 
-docroot: "{{ ansible_env.HOME }}/public_html/{{ env }}"
+docroot: "{{ ansible_env.HOME }}/public_html/{{ domain }}/{{ env }}"

@@ -1,0 +1,11 @@
+---
+
+- name: Deploy the oudebrommers domain(s)
+  hosts: simple-wp
+  remote_user: oudebro
+  vars:
+    docroot: "{{ ansible_env.HOME }}/public_html/{{ domain }}/{{ env }}"
+  roles:
+    - wordpress
+    - nginx
+  become_method: su
