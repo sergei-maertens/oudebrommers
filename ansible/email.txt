@@ -1,0 +1,8 @@
+firewall
+
+* allow incoming on IP to MySQL port
+* allow incoming on 172.17.0.1/ to port 25 (smtp) -> `ufw allow in on docker0 to any port 25`
+
+http://satishgandham.com/2016/12/sending-email-from-docker-through-postfix-installed-on-the-host/
+
+in /etc/postfix/main.cf -> add docker container IP to mynetworks

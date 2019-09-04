@@ -1,0 +1,23 @@
+---
+
+# Set up the database
+
+- name: Create database user for the forum
+  mysql_user:
+    name: "{{ db[domain].forum.user }}"
+    password: "{{ db[domain].forum.password }}"
+    host: localhost
+    state: present
+  remote_user: root
+
+- name: Create database for the forum
+  mysql_db:
+    name: "{{ db[domain].forum.name }}"
+    state: present
+  remote_user: root
+
+- name: Grant db user privileges
+  mysql_user:
+    name: "{{ db[domain].forum.user }}"
+    priv: "{{ db[domain].forum.name }}.*:ALL"
+  remote_user: root

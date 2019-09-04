@@ -5,6 +5,7 @@
   remote_user: oudebro
   vars:
     docroot: "{{ ansible_env.HOME }}/public_html/{{ domain }}/{{ env }}"
+    wp_image: "oudebrommers/wordpress:5.0-php7.3-apache"
   roles:
     - wordpress
     - nginx
