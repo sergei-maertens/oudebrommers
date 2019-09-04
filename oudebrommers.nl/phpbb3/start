@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -ex
+
+DIRS=(
+    /var/www/html/phpbb3/cache
+    /var/www/html/phpbb3/files
+    /var/www/html/phpbb3/images
+)
+
+for dir in "${DIRS[@]}"; do
+    chown www-data $dir
+done
+
+apache2-foreground

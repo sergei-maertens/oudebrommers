@@ -1,0 +1,31 @@
+---
+
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: supersecret
+      MYSQL_USER: oudebro
+      MYSQL_PASSWORD: letmein
+      MYSQL_DATABASE: oudebro
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpbb3:
+    build: .
+    ports:
+      - "9000:80"
+    environment:
+      PHPBB3_DB_HOST: db
+      PHPBB3_DB_USER: oudebro
+      PHPBB3_DB_PASSWORD: letmein
+      PHPBB3_DB_NAME: oudebro
+    volumes:
+      - /home/bbt/work/projects/oudebrommers/phpbb3/:/var/www/html/phpbb3/
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
