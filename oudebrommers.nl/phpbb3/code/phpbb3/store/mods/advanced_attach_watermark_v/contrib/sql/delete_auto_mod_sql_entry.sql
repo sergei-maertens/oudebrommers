@@ -1,0 +1,1 @@
+DELETE FROM phpbb4_mods WHERE mod_name = 'Advanced Attach Watermark';

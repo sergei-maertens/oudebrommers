@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<title>Text Color</title>
+
+<style type="text/css">
+<!--
+input.farbe_1{
+background-color: #DDDFE3;
+}
+#submit_id, #submit_close {
+  	       width: auto !important;
+background-image: url("../../includes/watermark/images/bg_button.gif");
+	      border: 1px solid #666666;
+	       color: black;
+	      cursor: pointer;
+	      cursor: hand;
+}
+#submit_id:hover, #submit_close:hover{
+	         border: 1px solid #BC294D;
+background-position: 0 100%;
+	          color: #BC294D;
+}
+-->
+</style>
+
+<script type="text/javascript">
+// <![CDATA[
+function insert(form,field,auswahltxt) {
+if (parent.opener.document.forms[form].elements[field].createTextRange) {
+parent.opener.document.forms[form].elements[field].focus();
+parent.opener.document.forms[form].elements[field].select();
+parent.opener.document.selection.createRange().duplicate().text = auswahltxt;
+} else if ((typeof parent.opener.document.forms[form].elements[field].selectionStart) != 'undefined') { // fr Mozilla
+var tarea = parent.opener.document.forms[form].elements[field];
+tarea.focus();
+tarea.select();
+tarea.value = auswahltxt;
+} else {
+parent.opener.document.forms[form].elements[field].focus();
+parent.opener.document.forms[form].elements[field].select();
+parent.opener.document.forms[form].elements[field].value += auswahltxt;
+}
+window.close();
+}
+// ]]>
+</script>
+
+<script type="text/javascript">
+// <![CDATA[
+function replaceButtonText(buttonId, text)
+{
+	if (document.getElementById)
+	{
+		var button=document.getElementById(buttonId);
+		if (button)
+		{
+			if (button.childNodes[0])
+			{
+				//alert("ch");		
+				button.childNodes[0].nodeValue=text;
+			}
+			else if (button.value)
+			{
+				//alert("val");		
+				button.value=text;
+			}
+			else //if (button.innerHTML)
+			{
+				//alert("inner");
+				button.innerHTML=text;
+			}		
+		}
+	}
+}
+// ]]> 
+</script>
+
+</head>
+<body style="background:#F3F3F3">
+
+<fieldset style="border:none;">
+
+<input  type="text" class="farbe_1" name="farbe_1" value="FFFFFF" maxlength="7" size="7" onchange="farbe_wechseln(this.name,this.value)" /> 
+&nbsp;&nbsp;
+<span id="farbe_1" style="background-color:#FFFFFF; border-width:1px; border-color:black; border-style:solid; width:20px; cursor:help;" onmouseover="onmousedown=farbe_an_1;farbinput=this.id" onmouseout="onmousedown=null" title="Choose Text Color">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;&nbsp;
+<input type="submit" id="submit_id" onmouseover="javascript:replaceButtonText('submit_id', document.getElementsByName('farbe_1')[0].value + ' >>')" onclick="insert('acp_watermark','config[watermark_text_color]', document.getElementsByName('farbe_1')[0].value )" value="Color >>" />
+	
+<span id="farbselektor_1" style="z-index:1; display:none;">
+<script type="text/javascript">
+// <![CDATA[
+var farbinput;
+
+//farbwert festlegen
+function ini() {
+	wert = new Array(18)
+	wert[0]="00"
+	wert[1]="11"
+	wert[2]="22"
+	wert[3]="33"
+	wert[4]="44"
+	wert[5]="55"
+	wert[6]="66"
+	wert[7]="77"
+	wert[8]="88"
+	wert[9]="99"
+	wert[10]="AA"
+	wert[11]="BB"
+	wert[12]="CC"
+	wert[13]="DD"
+	wert[14]="EE"
+	wert[15]="FF"
+	wert[16]="C0" //spezial grauton "silver"
+	wert[17]="80" //spezial grauton "gray"
+}
+
+//ermittlung wo der klick erfolgt ist und farbpalette ffnen
+function farbe_an_1(Ereignis) {
+	if (!Ereignis)
+		Ereignis = window.event;
+	document.getElementById("farbselektor_1").style.left = Ereignis.clientX+"px";
+	document.getElementById("farbselektor_1").style.top = Ereignis.clientY+"px";
+	document.getElementById("farbselektor_1").style.display = "block";
+}
+
+//ausgewhlte farbe in das formularfeld bernehmen und palette schliessen
+function farbe_aus_1(kw,lw,mw) {
+	document.getElementById("farbselektor_1").style.display = "none";
+	document.getElementsByName(farbinput)[0].value = "" + wert[kw] + wert[lw] + wert[mw];
+	if(document.getElementById(farbinput).style.backgroundColor) {
+		document.getElementById(farbinput).style.backgroundColor = "#" + wert[kw] + wert[lw] + wert[mw];
+	} else {
+		document.getElementsByName(farbinput)[1].style.backgroundColor = "" + wert[kw] + wert[lw] + wert[mw];
+	}
+}
+
+//erkennen welcher farbwert in das formular direkt eingegeben wurde
+function farbe_wechseln(wert_name,wert_value) {
+	if(document.getElementById(wert_name).style.backgroundColor) {
+		document.getElementById(wert_name).style.backgroundColor = wert_value;
+	} else {
+		document.getElementsByName(wert_name)[1].style.backgroundColor = wert_value;
+	}
+}
+
+//die eigentliche farbpalette
+function palette() {
+	var tabinhalt = '';
+	//cellspacing auf 0 = keinen abstand zwischen den farbfeldern
+	//cellspacing auf 1 = 1 pixel abstand zwischen den farbfeldern
+	tabinhalt += '<table border="0" cellpadding="0" cellspacing="0" style="position:relative;left:0px;top:16px; background-color:white; border-width:10px; border-color:white; border-style:solid;">';
+	tabinhalt += '';
+	for(var i=0; i<18; i++) {
+		tabinhalt += '<tr>';
+		for(var j=0; j<13; j++) {
+			if (i < 6)
+				if (j < 6) k = 5;
+				else k = 4;
+			if ((i > 5) && (i < 12))
+				if (j < 6) k = 2;
+				else k = 3;
+			if (i > 11)
+				if (j < 6) k = 1;
+				else k = 0;
+			if (i < 6) l = 5 - i;
+			if ((i > 5) && (i < 12)) l = i - 6;
+			if (i > 11) l = 17 - i;
+			if (j < 6) m = j;
+			else m = 11 - j;
+
+			if (j==12) {
+				k = l = m = 17-i;
+			} else {
+				k *= 3;
+				l *= 3;
+				m *= 3;
+			}
+			farb = "" + wert[k] + wert[l] + wert[m];
+			tabinhalt += '<td bgcolor="#' + farb + '">';
+			tabinhalt += '<a href="JavaScript:farbe_aus_1(' + k + ',' + l + ',' + m + ')" title="">';
+			//width und height = grsse der einzelnen farbfelder in pixel
+			tabinhalt += '<img src="../../includes/watermark/images/blank.gif" width="14" height="14" border="0" alt=""></a></td>';
+		}
+		tabinhalt += '</tr>';
+	}
+	tabinhalt += '</table>';
+	document.writeln(tabinhalt);
+	tabinhalt = null;
+}
+
+ini();
+palette();
+
+// ]]>
+</script>
+</span>
+<br /><br />
+<input type="submit" value="Close" id="submit_close" onclick="window.close()" />
+</fieldset>
+</body>
+</html>

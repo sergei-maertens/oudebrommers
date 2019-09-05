@@ -1,0 +1,445 @@
+<!-- INCLUDE overall_header.html -->
+
+<!-- IF S_FORUM_RULES -->
+	<div class="forumrules">
+		<!-- IF U_FORUM_RULES -->
+			<h3>{L_FORUM_RULES}</h3><br />
+			<a href="{U_FORUM_RULES}"><b>{L_FORUM_RULES_LINK}</b></a>
+		<!-- ELSE -->
+			<h3>{L_FORUM_RULES}</h3><br />
+			{FORUM_RULES}
+		<!-- ENDIF -->
+	</div>
+
+	<br clear="all" />
+<!-- ENDIF -->
+
+<div id="pageheader">
+	<h2><a class="titles" href="{U_VIEW_TOPIC}">{TOPIC_TITLE}</a></h2>
+
+<!-- IF MODERATORS -->
+	<p class="moderators"><!-- IF S_SINGLE_MODERATOR -->{L_MODERATOR}<!-- ELSE -->{L_MODERATORS}<!-- ENDIF -->: {MODERATORS}</p>
+<!-- ENDIF -->
+<!-- IF U_MCP -->
+	<p class="linkmcp">[ <a href="{U_MCP}">{L_MCP}</a> ]</p>
+<!-- ENDIF -->
+</div>
+
+<br clear="all" /><br />
+
+<div id="pagecontent">
+
+	<table width="100%" cellspacing="1">
+	<tr>
+		<td align="{S_CONTENT_FLOW_BEGIN}" valign="middle" nowrap="nowrap">
+		<!-- IF not S_IS_BOT -->
+			<!-- IF S_DISPLAY_POST_INFO --><a href="{U_POST_NEW_TOPIC}">{POST_IMG}</a>&nbsp;<!-- ENDIF -->
+			<!-- IF S_DISPLAY_REPLY_INFO --><a href="{U_POST_REPLY_TOPIC}">{REPLY_IMG}</a><!-- ENDIF -->
+		<!-- ENDIF -->
+		</td>
+		<!-- IF TOTAL_POSTS -->
+			<td class="nav" valign="middle" nowrap="nowrap">&nbsp;{PAGE_NUMBER}<br /></td>
+			<td class="gensmall" nowrap="nowrap">&nbsp;[ {TOTAL_POSTS} ]&nbsp;</td>
+			<td class="gensmall" width="100%" align="{S_CONTENT_FLOW_END}" nowrap="nowrap"><!-- INCLUDE pagination.html --></td>
+		<!-- ENDIF -->
+	</tr>
+	</table>
+
+	<table class="tablebg" width="100%" cellspacing="1">
+	<tr>
+		<td class="cat">
+			<table width="100%" cellspacing="0">
+			<tr>
+				<td class="nav" nowrap="nowrap">&nbsp;
+				<!-- IF not S_IS_BOT -->
+					<!-- IF U_WATCH_TOPIC --><a href="{U_WATCH_TOPIC}" title="{L_WATCH_TOPIC}">{L_WATCH_TOPIC}</a><!-- IF U_PRINT_TOPIC or U_EMAIL_TOPIC or U_BUMP_TOPIC or U_BOOKMARK_TOPIC --> | <!-- ENDIF --><!-- ENDIF -->
+					<!-- IF U_BOOKMARK_TOPIC --><a href="{U_BOOKMARK_TOPIC}" title="{L_BOOKMARK_TOPIC}">{L_BOOKMARK_TOPIC}</a><!-- IF U_PRINT_TOPIC or U_EMAIL_TOPIC or U_BUMP_TOPIC --> | <!-- ENDIF --><!-- ENDIF -->
+					<!-- IF U_PRINT_TOPIC --><a href="{U_PRINT_TOPIC}" title="{L_PRINT_TOPIC}">{L_PRINT_TOPIC}</a><!-- IF U_EMAIL_TOPIC or U_BUMP_TOPIC --> | <!-- ENDIF --><!-- ENDIF -->
+					<!-- IF U_EMAIL_TOPIC --><a href="{U_EMAIL_TOPIC}" title="{L_EMAIL_TOPIC}">{L_EMAIL_TOPIC}</a><!-- IF U_BUMP_TOPIC --> | <!-- ENDIF --><!-- ENDIF -->
+					<!-- IF U_BUMP_TOPIC --><a href="{U_BUMP_TOPIC}" title="{L_BUMP_TOPIC}">{L_BUMP_TOPIC}</a><!-- ENDIF -->
+				<!-- ENDIF -->
+				</td>
+				<td class="nav" align="{S_CONTENT_FLOW_END}" nowrap="nowrap"><a href="{U_VIEW_OLDER_TOPIC}">{L_VIEW_PREVIOUS_TOPIC}</a><!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --> | <a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a><!-- ENDIF --> | <a href="{U_VIEW_NEWER_TOPIC}">{L_VIEW_NEXT_TOPIC}</a>&nbsp;</td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+<!-- IF S_HAS_POLL -->
+	<tr>
+		<td class="row2" colspan="2" align="center"><br clear="all" />
+
+			<form method="post" action="{S_POLL_ACTION}">
+
+			<table cellspacing="0" cellpadding="4" border="0" align="center">
+			<tr>
+				<td align="center"><span class="gen"><b>{POLL_QUESTION}</b></span><br /><span class="gensmall">{L_POLL_LENGTH}</span></td>
+			</tr>
+			<tr>
+				<td align="{S_CONTENT_FLOW_BEGIN}">
+					<table cellspacing="0" cellpadding="2" border="0">
+				<!-- BEGIN poll_option -->
+					<tr>
+					<!-- IF S_CAN_VOTE -->
+						<td>
+							<!-- IF S_IS_MULTI_CHOICE -->
+								<input type="checkbox" class="radio" name="vote_id[]" value="{poll_option.POLL_OPTION_ID}"<!-- IF poll_option.POLL_OPTION_VOTED --> checked="checked"<!-- ENDIF --> />
+							<!-- ELSE -->
+								<input type="radio" class="radio" name="vote_id[]" value="{poll_option.POLL_OPTION_ID}"<!-- IF poll_option.POLL_OPTION_VOTED --> checked="checked"<!-- ENDIF --> />
+							<!-- ENDIF -->
+						</td>
+					<!-- ENDIF -->
+						<td><span class="gen">{poll_option.POLL_OPTION_CAPTION}</span></td>
+						<!-- IF S_DISPLAY_RESULTS -->
+							<td dir="ltr">{POLL_LEFT_CAP_IMG}{poll_option.POLL_OPTION_IMG}{POLL_RIGHT_CAP_IMG}</td>
+							<td class="gen" align="{S_CONTENT_FLOW_END}"><b>&nbsp;{poll_option.POLL_OPTION_PERCENT}&nbsp;</b></td>
+							<td class="gen" align="center">[ {poll_option.POLL_OPTION_RESULT} ]</td>
+							<!-- IF poll_option.POLL_OPTION_VOTED -->
+								<td class="gensmall" valign="top"><b title="{L_POLL_VOTED_OPTION}">x</b></td>
+							<!-- ENDIF -->
+						<!-- ENDIF -->
+					</tr>
+				<!-- END poll_option -->
+					</table>
+				</td>
+			</tr>
+		<!-- IF S_CAN_VOTE -->
+			<tr>
+				<td align="center"><span class="gensmall">{L_MAX_VOTES}</span><br /><br /><input type="submit" name="update" value="{L_SUBMIT_VOTE}" class="btnlite" /></td>
+			</tr>
+		<!-- ENDIF -->
+		<!-- IF S_DISPLAY_RESULTS -->
+			<tr>
+				<td class="gensmall" colspan="4" align="center"><b>{L_TOTAL_VOTES} : {TOTAL_VOTES}</b></td>
+			</tr>
+		<!-- ELSE -->
+			<tr>
+				<td align="center"><span class="gensmall"><b><a href="{U_VIEW_RESULTS}">{L_VIEW_RESULTS}</a></b></span></td>
+			</tr>
+		<!-- ENDIF -->
+			</table>
+			{S_HIDDEN_FIELDS}
+			{S_FORM_TOKEN}
+			</form>
+
+		</td>
+	</tr>
+<!-- ENDIF -->
+	</table>
+
+<!-- BEGIN postrow -->
+	<table class="tablebg" width="100%" cellspacing="1">
+	<!-- IF postrow.S_FIRST_ROW -->
+		<tr>
+			<th>{L_AUTHOR}</th>
+			<th>{L_MESSAGE}</th>
+		</tr>
+	<!-- ENDIF -->
+	<!-- IF postrow.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
+
+	<!-- IF postrow.S_IGNORE_POST -->
+			<td class="gensmall" colspan="2" height="25" align="center"><!-- IF postrow.S_FIRST_UNREAD --><a name="unread"></a><!-- ENDIF --><a name="p{postrow.POST_ID}"></a>{postrow.L_IGNORE_POST}</td>
+	<!-- ELSE -->
+
+			<td align="center" valign="middle">
+				<!-- IF postrow.S_FIRST_UNREAD --><a name="unread"></a><!-- ENDIF --><a name="p{postrow.POST_ID}"></a>
+				<b class="postauthor"<!-- IF postrow.POST_AUTHOR_COLOUR --> style="color: {postrow.POST_AUTHOR_COLOUR}"<!-- ENDIF -->>{postrow.POST_AUTHOR}</b>
+			</td>
+			<td width="100%" height="25">
+				<table width="100%" cellspacing="0">
+				<tr>
+				<!-- IF postrow.POST_ICON_IMG -->
+					<td><img src="{T_ICONS_PATH}{postrow.POST_ICON_IMG}" width="{postrow.POST_ICON_IMG_WIDTH}" height="{postrow.POST_ICON_IMG_HEIGHT}" alt="" title="" /></td>
+				<!-- ENDIF -->
+					<td class="gensmall" width="100%"><div style="float: {S_CONTENT_FLOW_BEGIN};">&nbsp;<b>{L_POST_SUBJECT}:</b> {postrow.POST_SUBJECT}</div><div style="float: {S_CONTENT_FLOW_END};"><!-- IF S_IS_BOT -->{postrow.MINI_POST_IMG}<!-- ELSE --><a href="{postrow.U_MINI_POST}">{postrow.MINI_POST_IMG}</a><!-- ENDIF --><b>{L_POSTED}:</b> {postrow.POST_DATE}&nbsp;</div></td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+
+		<!-- IF postrow.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
+
+			<td valign="top" class="profile">
+				<table cellspacing="4" align="center" width="150">
+			
+
+			<!-- IF postrow.RANK_IMG -->
+				<tr>
+					<td>{postrow.RANK_IMG}</td>
+				</tr>
+			<!-- ENDIF -->
+			<!-- IF postrow.POSTER_AVATAR -->
+				<tr>
+					<td>{postrow.POSTER_AVATAR}</td>
+				</tr>
+			<!-- ENDIF -->
+			<!-- IF not (postrow.ONLINE_IMG or postrow.RANK_TITLE or postrow.RANK_IMG or postrow.POSTER_AVATAR) -->
+				<tr>
+					<td></td>
+				</tr>
+			<!-- ENDIF -->
+				</table>
+
+				<span class="postdetails">
+					<!-- IF postrow.POSTER_JOINED --><br /><b>{L_JOINED}:</b> {postrow.POSTER_JOINED}<!-- ENDIF -->
+					<!-- IF postrow.POSTER_POSTS != '' --><br /><b>{L_POSTS}:</b> {postrow.POSTER_POSTS}<!-- ENDIF -->
+					<!-- IF postrow.POSTER_FROM --><br /><b>{L_LOCATION}:</b> {postrow.POSTER_FROM}<!-- ENDIF -->
+
+					<!-- IF postrow.S_PROFILE_FIELD1 -->
+						<!-- Use a construct like this to include admin defined profile fields. Replace FIELD1 with the name of your field. -->
+						<br /><b>{postrow.PROFILE_FIELD1_NAME}:</b> {postrow.PROFILE_FIELD1_VALUE}
+					<!-- ENDIF -->
+
+					<!-- BEGIN custom_fields -->
+						<br /><b>{postrow.custom_fields.PROFILE_FIELD_NAME}:</b> {postrow.custom_fields.PROFILE_FIELD_VALUE}
+					<!-- END custom_fields -->
+				</span>
+
+			</td>
+			<td valign="top">
+				<table width="100%" cellspacing="5">
+				<tr>
+					<td>
+					<!-- IF postrow.S_POST_UNAPPROVED or postrow.S_POST_REPORTED -->
+						<table width="100%" cellspacing="0">
+						<tr>
+							<td class="gensmall"><!-- IF postrow.S_POST_UNAPPROVED --><span class="postapprove">{UNAPPROVED_IMG} <a href="{postrow.U_MCP_APPROVE}">{L_POST_UNAPPROVED}</a></span><br /> <!-- ENDIF --> <!-- IF postrow.S_POST_REPORTED --><span class="postreported">{REPORTED_IMG} <a href="{postrow.U_MCP_REPORT}">{L_POST_REPORTED}</a></span><!-- ENDIF --></td>
+						</tr>
+						</table>
+
+						<br clear="all" />
+					<!-- ENDIF -->
+
+						<div class="postbody">{postrow.MESSAGE}</div>
+
+					<!-- IF postrow.S_HAS_ATTACHMENTS -->
+						<br clear="all" /><br />
+
+						<table class="tablebg" width="100%" cellspacing="1">
+						<tr>
+							<td class="row3"><b class="genmed">{L_ATTACHMENTS}: </b></td>
+						</tr>
+						<!-- BEGIN attachment -->
+							<tr>
+								<!-- IF postrow.attachment.S_ROW_COUNT is even --><td class="row2"><!-- ELSE --><td class="row1"><!-- ENDIF -->{postrow.attachment.DISPLAY_ATTACHMENT}</td>
+							</tr>
+						<!-- END attachment -->
+						</table>
+					<!-- ENDIF -->
+
+					<!-- IF postrow.S_DISPLAY_NOTICE -->
+						<span class="gensmall error"><br /><br />{L_DOWNLOAD_NOTICE}</span>
+					<!-- ENDIF -->
+					<!-- IF postrow.SIGNATURE -->
+						<span class="postbody"><br />_________________<br />{postrow.SIGNATURE}</span>
+					<!-- ENDIF -->
+
+					<!-- IF postrow.EDITED_MESSAGE or postrow.EDIT_REASON -->
+						<!-- IF postrow.EDIT_REASON -->
+							<br /><br />
+							<table class="tablebg" width="100%" cellspacing="1">
+							<tr>
+								<td class="row3"><span class="gensmall">{postrow.EDITED_MESSAGE}</span></td>
+							</tr>
+							<tr>
+								<td class="row2"><span class="genmed">{postrow.EDIT_REASON}</span></td>
+							</tr>
+							</table>
+						<!-- ELSE -->
+							<br /><br />
+							<span class="gensmall">{postrow.EDITED_MESSAGE}</span>
+						<!-- ENDIF -->
+					<!-- ENDIF -->
+
+					<!-- IF postrow.BUMPED_MESSAGE -->
+						<span class="gensmall"><br /><br />{postrow.BUMPED_MESSAGE}</span>
+					<!-- ENDIF -->
+
+					<!-- IF not postrow.S_HAS_ATTACHMENTS --><br clear="all" /><br /><!-- ENDIF -->
+
+						<table width="100%" cellspacing="0">
+						<tr valign="middle">
+							<td class="gensmall" align="{S_CONTENT_FLOW_END}">
+							<!-- IF not S_IS_BOT -->
+	
+
+
+
+<!-- Share_On_2.2.0_MOD -->
+<!-- IF postrow.S_SO_POSITION eq 1 -->
+	<!-- IF postrow.S_SO_STATUS -->
+		<!-- IF postrow.S_SO_TYPE eq 0 || postrow.S_FIRST_ROW -->
+			<!-- IF postrow.S_SO_FACEBOOK --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_FACEBOOK}<!-- ELSE -->{postrow.U_FACEBOOK_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_FACEBOOK}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_facebook.png" alt="{L_SHARE_ON_FACEBOOK}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_TWITTER --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_TWITTER}<!-- ELSE -->{postrow.U_TWITTER_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_TWITTER}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_twitter.png" alt="{L_SHARE_ON_TWITTER}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_TUENTI --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_TUENTI}<!-- ELSE -->{postrow.U_TUENTI_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_TUENTI}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_tuenti.png" alt="{L_SHARE_ON_TUENTI}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_SONICO --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_SONICO}<!-- ELSE -->{postrow.U_SONICO_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_SONICO}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_sonico.png" alt="{L_SHARE_ON_SONICO}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_FRIENDFEED --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_FRIENDFEED}<!-- ELSE -->{postrow.U_FRIENDFEED_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_FRIENDFEED}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_friendfeed.png" alt="{L_SHARE_ON_FRIENDFEED}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_ORKUT --><a title="{L_SHARE_ON_ORKUT}" href="javascript:(function(){var d=document,l=d.location,e=encodeURIComponent,u='http://promote.orkut.com/preview?src=bkmrklt&amp;v=1&amp;nt=orkut.com&amp;du='+e(l.href)+'&amp;tt='+e(d.title),s='&amp;rdrinl=1';if(!window.open(u,'','height=575,width=700,directories=0,location=1,menubar=0,resizable=0,scrollbars=1,status=1,toolbar=0'))l.href=u+s;})();"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_orkut.gif" alt="{L_SHARE_ON_ORKUT}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_DIGG --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_DIGG}<!-- ELSE -->{postrow.U_DIGG_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_DIGG}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_digg.gif" alt="{L_SHARE_ON_DIGG}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_REDDIT --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_REDDIT}<!-- ELSE -->{postrow.U_REDDIT_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_REDDIT}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_reddit.png" alt="{L_SHARE_ON_REDDIT}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_DELICIOUS --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_DELICIOUS}<!-- ELSE -->{postrow.U_DELICIOUS_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_DELICIOUS}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_delicious.gif" alt="{L_SHARE_ON_DELICIOUS}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_VK --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_VK}<!-- ELSE -->{postrow.U_VK_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_VK}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_vk.png" alt="{L_SHARE_ON_VK}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_TUMBLR --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_TUMBLR}<!-- ELSE -->{postrow.U_TUMBLR_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_TUMBLR}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_tumblr.png" alt="{L_SHARE_ON_TUMBLR}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_GOOGLE --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_GOOGLE}<!-- ELSE -->{postrow.U_GOOGLE_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_GOOGLE}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_google.gif" alt="{L_SHARE_ON_GOOGLE}" /></a><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_MYSPACE --><a href="<!-- IF postrow.S_SO_TYPE eq 1 -->{postrow.U_MYSPACE}<!-- ELSE -->{postrow.U_MYSPACE_POST}<!-- ENDIF -->" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_MYSPACE}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_myspace.png" alt="{L_SHARE_ON_MYSPACE}" /></a><!-- ENDIF -->
+		<!-- ENDIF -->
+	<!-- ENDIF -->
+<!-- ENDIF -->
+<!-- Share_On_2.2.0_MOD -->
+								<!-- IF postrow.U_REPORT --><a href="{postrow.U_REPORT}">{REPORT_IMG}</a> <!-- ENDIF --> 
+								<!-- IF postrow.U_INFO --><a href="{postrow.U_INFO}">{INFO_IMG}</a> <!-- ENDIF --> 
+								<!-- IF postrow.U_WARN --><a href="{postrow.U_WARN}">{WARN_IMG}</a> <!-- ENDIF --> 
+								<!-- IF postrow.U_DELETE --><a href="{postrow.U_DELETE}">{DELETE_IMG}</a> <!-- ENDIF -->
+							<!-- ENDIF -->
+							</td>
+						</tr>
+						</table>
+					</td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+
+		<!-- IF postrow.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
+
+			<td class="profile"><strong><a href="#wrapheader">{L_BACK_TO_TOP}</a></strong></td>
+			<td><div class="gensmall" style="float: {S_CONTENT_FLOW_BEGIN};">&nbsp;<!-- IF postrow.ONLINE_IMG -->{postrow.ONLINE_IMG}<!-- ENDIF -->&nbsp;<!-- IF postrow.U_POST_AUTHOR --><a href="{postrow.U_POST_AUTHOR}">{PROFILE_IMG}</a> <!-- ENDIF --> <!-- IF postrow.U_PM --><a href="{postrow.U_PM}">{PM_IMG}</a> <!-- ENDIF --> <!-- IF postrow.U_EMAIL --><a href="{postrow.U_EMAIL}">{EMAIL_IMG}</a> <!-- ENDIF -->&nbsp;</div> <div class="gensmall" style="float: {S_CONTENT_FLOW_END};"><!-- IF not S_IS_BOT --><!-- IF postrow.U_EDIT --><a href="{postrow.U_EDIT}">{EDIT_IMG}</a> <!-- ENDIF --> <!-- IF postrow.U_QUOTE --><a href="{postrow.U_QUOTE}">{QUOTE_IMG}</a> <!-- ENDIF --> <!-- ENDIF -->&nbsp;</div></td>
+	<!-- ENDIF -->
+		</tr>
+
+	<tr>
+		<td class="spacer" colspan="2" height="1"><img src="images/spacer.gif" alt="" width="1" height="1" /></td>
+	</tr>
+	</table>
+
+<!-- Share_On_2.2.0_MOD -->
+<!-- IF postrow.S_SO_POSITION eq 0 -->
+	<!-- IF postrow.S_SO_STATUS and postrow.S_FIRST_ROW -->
+<br clear="all" />
+<h4>{L_SO_SELECT}</h4>
+	<table align="center" width="100%">
+		<tr align="center">
+			<!-- IF postrow.S_SO_FACEBOOK --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_FACEBOOK}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_FACEBOOK}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_facebook.png" alt="{L_SHARE_ON_FACEBOOK}" /></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_FACEBOOK}" onclick="window.open(this.href);return false;">{L_SO_FACEBOOK}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_TWITTER --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_TWITTER}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_TWITTER}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_twitter.png" alt="{L_SHARE_ON_TWITTER}" /></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_TWITTER}" onclick="window.open(this.href);return false;">{L_SO_TWITTER}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_TUENTI --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_TUENTI}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_TUENTI}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_tuenti.png" alt="{L_SHARE_ON_TUENTI}" /></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_TUENTI}" onclick="window.open(this.href);return false;">{L_SO_TUENTI}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_SONICO --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_SONICO}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_SONICO}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_sonico.png" alt="{L_SHARE_ON_SONICO}" /></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_SONICO}" onclick="window.open(this.href);return false;">{L_SO_SONICO}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_FRIENDFEED --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_FRIENDFEED}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_FRIENDFEED}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_friendfeed.png" alt="{L_SHARE_ON_FRIENDFEED}" /></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_FRIENDFEED}" onclick="window.open(this.href);return false;">{L_SO_FRIENDFEED}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_ORKUT --><td align="{S_CONTENT_FLOW_END}"><a title="{L_SHARE_ON_ORKUT}" href="javascript:(function(){var d=document,l=d.location,e=encodeURIComponent,u='http://promote.orkut.com/preview?src=bkmrklt&amp;v=1&amp;nt=orkut.com&amp;du='+e(l.href)+'&amp;tt='+e(d.title),s='&amp;rdrinl=1';if(!window.open(u,'','height=575,width=700,directories=0,location=1,menubar=0,resizable=0,scrollbars=1,status=1,toolbar=0'))l.href=u+s;})();" ><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_orkut.gif" alt="{L_SHARE_ON_ORKUT}" /></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="javascript:(function(){var d=document,l=d.location,e=encodeURIComponent,u='http://promote.orkut.com/preview?src=bkmrklt&amp;v=1&amp;nt=orkut.com&amp;du='+e(l.href)+'&amp;tt='+e(d.title),s='&amp;rdrinl=1';if(!window.open(u,'','height=575,width=700,directories=0,location=1,menubar=0,resizable=0,scrollbars=1,status=1,toolbar=0'))l.href=u+s;})();">{L_SO_ORKUT}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_DIGG --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_DIGG}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_DIGG}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_digg.gif" alt="{L_SHARE_ON_DIGG}" /></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_DIGG}" onclick="window.open(this.href);return false;">{L_SO_DIGG}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_REDDIT --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_REDDIT}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_REDDIT}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_reddit.png" alt="{L_SHARE_ON_REDDIT}" /></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_REDDIT}" onclick="window.open(this.href);return false;">{L_SO_REDDIT}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_DELICIOUS --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_DELICIOUS}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_DELICIOUS}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_delicious.gif" alt="{L_SHARE_ON_DELICIOUS}" /></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_DELICIOUS}" onclick="window.open(this.href);return false;">{L_SO_DELICIOUS}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_VK --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_VK}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_VK}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_vk.png" alt="{L_SHARE_ON_VK}" /></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_VK}" onclick="window.open(this.href);return false;">{L_SO_VK}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_TUMBLR --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_TUMBLR}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_TUMBLR}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_tumblr.png" alt="{L_SHARE_ON_TUMBLR}" /></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_TUMBLR}" onclick="window.open(this.href);return false;">{L_SO_TUMBLR}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_GOOGLE --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_GOOGLE}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_GOOGLE}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_google.gif" alt="{L_SHARE_ON_GOOGLE}"/></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_GOOGLE}" onclick="window.open(this.href);return false;">{L_SO_GOOGLE}</a></td><!-- ENDIF -->
+
+			<!-- IF postrow.S_SO_MYSPACE --><td align="{S_CONTENT_FLOW_END}"><a href="{postrow.U_MYSPACE}" onclick="window.open(this.href);return false;" title="{L_SHARE_ON_MYSPACE}"><img src="{T_THEME_PATH}/images/share_on_buttons/shareon_myspace.png" alt="{L_SHARE_ON_MYSPACE}"/></a></td>
+			<td align="{S_CONTENT_FLOW_BEGIN}"><a href="{postrow.U_MYSPACE}" onclick="window.open(this.href);return false;">{L_SO_MYSPACE}</a></td><!-- ENDIF -->
+		</tr>   			
+	</table>
+<br clear="all" />
+	<!-- ENDIF -->
+<!-- ENDIF -->
+<!-- Share_On_2.2.0_MOD -->
+<!-- END postrow -->
+
+	<!-- IF not S_IS_BOT -->
+	<table width="100%" cellspacing="1" class="tablebg">
+	<tr align="center">
+		<td class="cat"><form name="viewtopic" method="post" action="{S_TOPIC_ACTION}"><span class="gensmall">{L_DISPLAY_POSTS}:</span> {S_SELECT_SORT_DAYS}&nbsp;<span class="gensmall">{L_SORT_BY}</span> {S_SELECT_SORT_KEY} {S_SELECT_SORT_DIR}&nbsp;<input class="btnlite" type="submit" value="{L_GO}" name="sort" /></form></td>
+	</tr>
+	</table>
+	<!-- ENDIF -->
+
+	<table width="100%" cellspacing="1">
+	<tr>
+		<td align="{S_CONTENT_FLOW_BEGIN}" valign="middle" nowrap="nowrap">
+		<!-- IF not S_IS_BOT -->
+			<!-- IF S_DISPLAY_POST_INFO --><a href="{U_POST_NEW_TOPIC}">{POST_IMG}</a>&nbsp;<!-- ENDIF -->
+			<!-- IF S_DISPLAY_REPLY_INFO --><a href="{U_POST_REPLY_TOPIC}">{REPLY_IMG}</a><!-- ENDIF -->
+		<!-- ENDIF -->
+		</td>
+		<!-- IF TOTAL_POSTS -->
+			<td class="nav" valign="middle" nowrap="nowrap">&nbsp;{PAGE_NUMBER}<br /></td>
+			<td class="gensmall" nowrap="nowrap">&nbsp;[ {TOTAL_POSTS} ]&nbsp;</td>
+			<td class="gensmall" width="100%" align="{S_CONTENT_FLOW_END}" nowrap="nowrap"><!-- INCLUDE pagination.html --></td>
+		<!-- ENDIF -->
+	</tr>
+	</table>
+
+</div>
+
+<div id="pagefooter"></div>
+
+<br clear="all" />
+<!-- IF S_QUICK_REPLY -->
+<!-- INCLUDE quickreply_editor.html -->
+<!-- ENDIF -->
+
+<!-- INCLUDE breadcrumbs.html -->
+
+<!-- IF S_DISPLAY_ONLINE_LIST -->
+	<br clear="all" />
+
+	<table class="tablebg" width="100%" cellspacing="1">
+	<tr>
+		<td class="cat"><h4>{L_WHO_IS_ONLINE}</h4></td>
+	</tr>
+	<tr>
+		<td class="row1"><p class="gensmall">{LOGGED_IN_USER_LIST}</p></td>
+	</tr>
+	</table>
+<!-- ENDIF -->
+
+<br clear="all" />
+
+<table width="100%" cellspacing="1">
+<tr>
+	<td width="40%" valign="top" nowrap="nowrap" align="{S_CONTENT_FLOW_BEGIN}"><!-- IF S_TOPIC_MOD --><form method="post" action="{S_MOD_ACTION}"><span class="gensmall">{L_QUICK_MOD}:</span> {S_TOPIC_MOD} <input class="btnlite" type="submit" value="{L_GO}" /></form><!-- ENDIF --></td>
+	<td align="{S_CONTENT_FLOW_END}" valign="top" nowrap="nowrap"><span class="gensmall"><!-- BEGIN rules -->{rules.RULE}<br /><!-- END rules --></span></td>
+</tr>
+</table>
+
+<br clear="all" />
+
+<table width="100%" cellspacing="0">
+<tr>
+	<td><!-- IF S_DISPLAY_SEARCHBOX --><!-- INCLUDE searchbox.html --><!-- ENDIF --></td>
+	<td align="{S_CONTENT_FLOW_END}"><!-- INCLUDE jumpbox.html --></td>
+</tr>
+</table>
+
+<!-- INCLUDE overall_footer.html -->

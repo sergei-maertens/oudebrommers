@@ -1,0 +1,383 @@
+<!-- IF not S_WM_GLOBAL_USER_ONOFF -->
+   <tr>
+	<td class="row2" colspan="2">
+
+    <span style="position:relative;top:5px;cursor:pointer;color:#28313F" onmouseover="this.style.color='#3366AA'" onmouseout="this.style.color='#28313F'" onclick="spoile('id1');"><b class="genmed">{L_AAW_USERNAME_MODE}</b></span>
+	
+	<span style="position:absolute;left:243px;">
+	<span style="position:relative;top:5px;">{L_AAW_USERNAME_MODE_LABEL}</span>
+	</span>
+	
+	<br /><br /><div id="id1" style="display:none;">
+   
+<table border="0" cellspacing="0" cellpadding="2">
+
+   <tr>	
+	<td style="width:200px;" class="row2"><b class="genmed">{L_AAW_ENABLE_MODE}</b></td> 
+	<td class="row2"><input class="wmiehack" type="radio" name="watermarkyes" value="user" /></td>
+   </tr>	
+ 
+ <tr>			
+	<td class="row2"><b class="genmed">{L_AAW_TEXT_SIZE}</b></td> 
+	<td class="row2">
+	<input class="wmiehack" type="radio" name="sizwmuser" value="50" checked="checked" />{L_AAW_MINI}
+	<input class="wmiehack" type="radio" name="sizwmuser" value="40" />{L_AAW_MIDI}
+	</td>
+ </tr>		
+
+  <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_TEXT_COLOR}</b></td> 
+	<td class="row2"><input type="text" name="farbe_1" value="FFFFFF" maxlength="7" size="7" onchange="farbe_wechseln(this.name,this.value)" /> <span id="farbe_1" style="background-color:#FFFFFF; border-width:1px; border-color:black; border-style:solid; width:20px; cursor:help;" onmouseover="onmousedown=farbe_an_1;farbinput=this.id" onmouseout="onmousedown=null">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+	
+<span id="farbselektor_1" style="z-index:1; display:none;">
+<script type="text/javascript">
+// <![CDATA[
+var farbinput;
+
+//farbwert festlegen
+function ini() {
+	wert = new Array(18)
+	wert[0]="00"
+	wert[1]="11"
+	wert[2]="22"
+	wert[3]="33"
+	wert[4]="44"
+	wert[5]="55"
+	wert[6]="66"
+	wert[7]="77"
+	wert[8]="88"
+	wert[9]="99"
+	wert[10]="AA"
+	wert[11]="BB"
+	wert[12]="CC"
+	wert[13]="DD"
+	wert[14]="EE"
+	wert[15]="FF"
+	wert[16]="C0" //spezial grauton "silver"
+	wert[17]="80" //spezial grauton "gray"
+}
+
+//ermittlung wo der klick erfolgt ist und farbpalette öffnen
+function farbe_an_1(Ereignis) {
+	if (!Ereignis)
+		Ereignis = window.event;
+	document.getElementById("farbselektor_1").style.left = Ereignis.clientX+"px";
+	document.getElementById("farbselektor_1").style.top = Ereignis.clientY+"px";
+	document.getElementById("farbselektor_1").style.display = "block";
+}
+
+//ausgewählte farbe in das formularfeld übernehmen und palette schliessen
+function farbe_aus_1(kw,lw,mw) {
+	document.getElementById("farbselektor_1").style.display = "none";
+	document.getElementsByName(farbinput)[0].value = "" + wert[kw] + wert[lw] + wert[mw];
+	if(document.getElementById(farbinput).style.backgroundColor) {
+		document.getElementById(farbinput).style.backgroundColor = "#" + wert[kw] + wert[lw] + wert[mw];
+	} else {
+		document.getElementsByName(farbinput)[1].style.backgroundColor = "" + wert[kw] + wert[lw] + wert[mw];
+	}
+}
+
+//erkennen welcher farbwert in das formular direkt eingegeben wurde
+function farbe_wechseln(wert_name,wert_value) {
+	if(document.getElementById(wert_name).style.backgroundColor) {
+		document.getElementById(wert_name).style.backgroundColor = wert_value;
+	} else {
+		document.getElementsByName(wert_name)[1].style.backgroundColor = wert_value;
+	}
+}
+
+//die eigentliche farbpalette
+function palette() {
+	var tabinhalt = '';
+	//cellspacing auf 0 = keinen abstand zwischen den farbfeldern
+	//cellspacing auf 1 = 1 pixel abstand zwischen den farbfeldern
+	tabinhalt += '<table border="0" cellpadding="0" cellspacing="0" style="position:relative;left:0px;top:3px; background-color:white; border-width:10px; border-color:white; border-style:solid;">';
+	tabinhalt += '';
+	for(var i=0; i<18; i++) {
+		tabinhalt += '<tr>';
+		for(var j=0; j<13; j++) {
+			if (i < 6)
+				if (j < 6) k = 5;
+				else k = 4;
+			if ((i > 5) && (i < 12))
+				if (j < 6) k = 2;
+				else k = 3;
+			if (i > 11)
+				if (j < 6) k = 1;
+				else k = 0;
+			if (i < 6) l = 5 - i;
+			if ((i > 5) && (i < 12)) l = i - 6;
+			if (i > 11) l = 17 - i;
+			if (j < 6) m = j;
+			else m = 11 - j;
+
+			if (j==12) {
+				k = l = m = 17-i;
+			} else {
+				k *= 3;
+				l *= 3;
+				m *= 3;
+			}
+			farb = "" + wert[k] + wert[l] + wert[m];
+			tabinhalt += '<td bgcolor="#' + farb + '">';
+			tabinhalt += '<a href="JavaScript:farbe_aus_1(' + k + ',' + l + ',' + m + ')" title="">';
+			//width und height = grösse der einzelnen farbfelder in pixel
+			tabinhalt += '<img src="includes/watermark/images/blank.gif" width="10" height="10" border="0" alt=""></a></td>';
+		}
+		tabinhalt += '</tr>';
+	}
+	tabinhalt += '</table>';
+	document.writeln(tabinhalt);
+	tabinhalt = null;
+}
+
+ini();
+palette();
+
+// ]]>
+</script>
+</span></td>
+ </tr>
+	
+ <tr>			
+	<td class="row2"><b class="genmed">{L_AAW_TEXT_POSITION}</b></td> 
+	 <td class="row2">
+	    <input class="wmiehack" type="radio" name="poswmuser" value="TL" />
+		<input class="wmiehack" type="radio" name="poswmuser" value="TM" />
+		<input class="wmiehack" type="radio" name="poswmuser" value="TR" />{L_AAW_TOP}
+		<br />
+		<input class="wmiehack" type="radio" name="poswmuser" value="BL" checked="checked" />
+		<input class="wmiehack" type="radio" name="poswmuser" value="BM" />
+		<input class="wmiehack" type="radio" name="poswmuser" value="BR" />{L_AAW_BOTTOM}	
+	</td>
+ </tr>	
+ 
+ <tr>			
+	<td class="row2"><b class="genmed">{L_AAW_TEXT_FONT}</b></td> 
+	<td class="row2">       <select name="fontwmuser">
+       <!-- BEGIN fontfile -->
+       <option value="{fontfile.FONTFILE}">{fontfile.FONTNAME}</option>
+       <!-- END fontfile -->
+       </select></td>
+ </tr>	
+
+  <tr>			
+	<td class="row2"><b class="genmed">{L_AAW_INFO}</b></td> 
+	<td class="row2">{L_AAW_INFO_LABEL_U_M}</td>
+ </tr>
+ 
+ </table> 
+	
+    </div>
+	
+	</td>
+   </tr>
+
+ <!-- ENDIF --> 
+   
+   <tr>
+	<td class="row2" colspan="2"> 
+
+
+    <span style="position:relative;top:5px;cursor:pointer;color:#28313F" onmouseover="this.style.color='#3366AA'" onmouseout="this.style.color='#28313F'" onclick="spoile('id2');"><b class="genmed">{L_AAW_PRIVATE_MODE}</b></span>
+	
+	<span style="position:absolute;left:243px;">
+	<span style="position:relative;top:5px;">{L_AAW_PRIVATE_MODE_LABEL}</span>
+	</span>
+	
+	<br /><br /><div id="id2" style="display:none;">
+	
+	   
+  <table border="0" cellspacing="0" cellpadding="2">
+
+   <tr>	
+	<td style="width:200px;" class="row2"><b class="genmed">{L_AAW_ENABLE_MODE}</b></td> 
+	<td class="row2"><input class="wmiehack" type="radio" name="watermarkyes" value="privat" /></td>
+   </tr>
+	
+   <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_TEXT_SIZE}</b></td> 
+	<td class="row2">
+	    <input class="wmiehack" type="radio" name="sizwm" value="50" />{L_AAW_MINI} 
+		<input class="wmiehack" type="radio" name="sizwm" value="40" checked="checked" />{L_AAW_MIDI}
+		<input class="wmiehack" type="radio" name="sizwm" value="20" />{L_AAW_MEDIUM}
+		<input class="wmiehack" type="radio" name="sizwm" value="10" />{L_AAW_MAXI}
+		<input class="wmiehack" type="radio" name="sizwm" value="5" />{L_AAW_HEAVY}
+	</td>
+   </tr>
+   
+   <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_TEXT_COLOR}</b></td> 
+	<td class="row2"><input type="text" name="farbe_2" value="FFFFFF" maxlength="7" size="7" onchange="farbe_wechseln(this.name,this.value)" /> <span id="farbe_2" style="background-color:#FFFFFF; border-width:1px; border-color:black; border-style:solid; width:20px; cursor:help;" onmouseover="onmousedown=farbe_an_2;farbinput=this.id" onmouseout="onmousedown=null">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+	
+<span id="farbselektor_2" style="z-index:1; display:none;">
+<script type="text/javascript">
+// <![CDATA[
+var farbinput;
+
+//farbwert festlegen
+function ini() {
+	wert = new Array(18)
+	wert[0]="00"
+	wert[1]="11"
+	wert[2]="22"
+	wert[3]="33"
+	wert[4]="44"
+	wert[5]="55"
+	wert[6]="66"
+	wert[7]="77"
+	wert[8]="88"
+	wert[9]="99"
+	wert[10]="AA"
+	wert[11]="BB"
+	wert[12]="CC"
+	wert[13]="DD"
+	wert[14]="EE"
+	wert[15]="FF"
+	wert[16]="C0" //spezial grauton "silver"
+	wert[17]="80" //spezial grauton "gray"
+}
+
+//ermittlung wo der klick erfolgt ist und farbpalette öffnen
+function farbe_an_2(Ereignis) {
+	if (!Ereignis)
+		Ereignis = window.event;
+	document.getElementById("farbselektor_2").style.left = Ereignis.clientX+"px";
+	document.getElementById("farbselektor_2").style.top = Ereignis.clientY+"px";
+	document.getElementById("farbselektor_2").style.display = "block";
+}
+
+//ausgewählte farbe in das formularfeld übernehmen und palette schliessen
+function farbe_aus_2(kw,lw,mw) {
+	document.getElementById("farbselektor_2").style.display = "none";
+	document.getElementsByName(farbinput)[0].value = "" + wert[kw] + wert[lw] + wert[mw];
+	if(document.getElementById(farbinput).style.backgroundColor) {
+		document.getElementById(farbinput).style.backgroundColor = "#" + wert[kw] + wert[lw] + wert[mw];
+	} else {
+		document.getElementsByName(farbinput)[1].style.backgroundColor = "" + wert[kw] + wert[lw] + wert[mw];
+	}
+}
+
+//erkennen welcher farbwert in das formular direkt eingegeben wurde
+function farbe_wechseln(wert_name,wert_value) {
+	if(document.getElementById(wert_name).style.backgroundColor) {
+		document.getElementById(wert_name).style.backgroundColor = wert_value;
+	} else {
+		document.getElementsByName(wert_name)[1].style.backgroundColor = wert_value;
+	}
+}
+
+//die eigentliche farbpalette
+function palette() {
+	var tabinhalt = '';
+	//cellspacing auf 0 = keinen abstand zwischen den farbfeldern
+	//cellspacing auf 1 = 1 pixel abstand zwischen den farbfeldern
+	tabinhalt += '<table border="0" cellpadding="0" cellspacing="0" style="position:relative;left:0px;top:3px; background-color:white; border-width:10px; border-color:white; border-style:solid;">';
+	tabinhalt += '';
+	for(var i=0; i<18; i++) {
+		tabinhalt += '<tr>';
+		for(var j=0; j<13; j++) {
+			if (i < 6)
+				if (j < 6) k = 5;
+				else k = 4;
+			if ((i > 5) && (i < 12))
+				if (j < 6) k = 2;
+				else k = 3;
+			if (i > 11)
+				if (j < 6) k = 1;
+				else k = 0;
+			if (i < 6) l = 5 - i;
+			if ((i > 5) && (i < 12)) l = i - 6;
+			if (i > 11) l = 17 - i;
+			if (j < 6) m = j;
+			else m = 11 - j;
+
+			if (j==12) {
+				k = l = m = 17-i;
+			} else {
+				k *= 3;
+				l *= 3;
+				m *= 3;
+			}
+			farb = "" + wert[k] + wert[l] + wert[m];
+			tabinhalt += '<td bgcolor="#' + farb + '">';
+			tabinhalt += '<a href="JavaScript:farbe_aus_2(' + k + ',' + l + ',' + m + ')" title="">';
+			//width und height = grösse der einzelnen farbfelder in pixel
+			tabinhalt += '<img src="includes/watermark/images/blank.gif" width="10" height="10" border="0" alt=""></a></td>';
+		}
+		tabinhalt += '</tr>';
+	}
+	tabinhalt += '</table>';
+	document.writeln(tabinhalt);
+	tabinhalt = null;
+}
+
+ini();
+palette();
+
+// ]]>
+</script>
+</span>
+     </td>
+   </tr>
+   
+   <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_TEXT_DEGREE}</b></td> 
+	 <td class="row2">
+	    <input class="wmiehack" type="radio" name="degwm" value="0" checked="checked" />{L_AAW_000}
+		<input class="wmiehack" type="radio" name="degwm" value="45" />{L_AAW_045}
+		<input class="wmiehack" type="radio" name="degwm" value="90" />{L_AAW_090}
+		<br />
+		<input class="wmiehack" type="radio" name="degwm" value="135" />{L_AAW_135}
+		<input class="wmiehack" type="radio" name="degwm" value="180" />{L_AAW_180}
+		<input class="wmiehack" type="radio" name="degwm" value="225" />{L_AAW_225}
+		<br />
+		<input class="wmiehack" type="radio" name="degwm" value="270" />{L_AAW_270}
+		<input class="wmiehack" type="radio" name="degwm" value="315" />{L_AAW_315}
+		<input class="wmiehack" type="radio" name="degwm" value="360" />{L_AAW_360}
+	</td>
+   </tr>
+ 
+   <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_TEXT_POSITION}</b></td> 
+	<td class="row2"><input class="wmiehack" type="radio" name="poswm" value="TL" />
+		<input class="wmiehack" type="radio" name="poswm" value="TM" />
+		<input class="wmiehack" type="radio" name="poswm" value="TR" />{L_AAW_TOP}
+		<br />
+		<input class="wmiehack" type="radio" name="poswm" value="CL" />
+		<input class="wmiehack" type="radio" name="poswm" value="C" />
+		<input class="wmiehack" type="radio" name="poswm" value="CR" />{L_AAW_CENTER}
+		<br />
+		<input class="wmiehack" type="radio" name="poswm" value="BL" checked="checked" />
+		<input class="wmiehack" type="radio" name="poswm" value="BM" />
+		<input class="wmiehack" type="radio" name="poswm" value="BR" />{L_AAW_BOTTOM}</td>
+   </tr> 
+
+   <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_TEXT_FONT}</b></td> 
+	 <td class="row2">
+	   <select name="fontwm">
+        <!-- BEGIN fontfile -->
+        <option value="{fontfile.FONTFILE}">{fontfile.FONTNAME}</option>
+        <!-- END fontfile -->
+       </select>
+	 </td>
+   </tr> 
+
+   <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_WATER_TEXT}</b></td> 
+	 <td class="row2">
+	<textarea name="watermarktext" id="watermarktext" rows="1" cols="40" class="inputbox autowidth" onkeyup="resizeTextArea(this, 1);"></textarea>
+	 </td>
+   </tr> 
+   
+   <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_INFO}</b></td> 
+	<td class="row2">{L_AAW_WATER_TEXT_LABEL_1} {WM_TEXT_DEMO}
+		<br /><br />{L_AAW_WATER_TEXT_LABEL_2}</td>
+   </tr>
+	
+	 </table> 	
+    </div>	
+	</td>
+   </tr>

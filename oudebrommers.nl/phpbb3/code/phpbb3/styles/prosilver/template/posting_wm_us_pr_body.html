@@ -1,0 +1,426 @@
+
+    <script type="text/javascript">
+    // <![CDATA[
+    function getMax(anumber, another) {
+        return((anumber> another) ? anumber : another);
+    }
+    function resizeTextArea(t, minRows, minCols) {
+        t.rows = minRows;
+        t.setAttribute("wrap", "off");
+        t.style.overflow = "auto";
+        lines = t.value.split("\n");
+		
+        if (arguments.length> 2) {
+            t.cols = minCols;
+            maxChars = lines[0].length;
+            for(i = 1; i <lines.length; i++) {
+                currentLength = lines[i].length;
+                if (currentLength> maxChars) maxChars = currentLength;
+            }
+            t.cols = getMax(maxChars, minCols);
+        }
+        t.rows = getMax(lines.length + 1, minRows);
+    }
+    // ]]>
+    </script>
+	
+    <script type="text/javascript">
+	// <![CDATA[
+      function spoile(id){
+       if (document.getElementById) {
+        var s = document.getElementById(id);
+        s.style.display = (s.style.display=='block'?'none':'block');
+        } 
+      }
+	 // ]]>
+    </script>
+
+	<!-- IF not S_WM_GLOBAL_USER_ONOFF -->
+	
+    <hr style="border: 1px;color:#5F9BCF;background-color:#5F9BCF;" />      
+	
+	<dl>
+		<dt><label><span style="cursor:pointer;color:#28313F" onmouseover="this.style.color='#3366AA'" onmouseout="this.style.color='#28313F'" onclick="spoile('id1');">{L_AAW_USERNAME_MODE}</span></label></dt>
+		<dd>
+		<label>{L_AAW_USERNAME_MODE_LABEL}</label>
+		</dd>
+	</dl>   	
+
+    <div id="id1" style="display:none;">
+
+	<dl>
+		<dt><label>{L_AAW_ENABLE_MODE}</label></dt>
+		<dd>
+		<label><input type="radio" name="watermarkyes" value="user" /></label>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt><label>{L_AAW_TEXT_SIZE}</label></dt>
+		<dd>
+		<label><input type="radio" name="sizwmuser" value="50" checked="checked" />{L_AAW_MINI}</label>
+		<label><input type="radio" name="sizwmuser" value="40" />{L_AAW_MIDI}</label>
+		</dd>
+	</dl>
+	
+    <dl>
+	   <dt><label>{L_AAW_TEXT_COLOR}</label></dt>
+	   <dd>
+       <label><input style="position:relative;top:2px;" type="text" name="farbe_1" value="FFFFFF" maxlength="7" size="7" onchange="farbe_wechseln(this.name,this.value)" /> <span id="farbe_1" style="background-color:#FFFFFF; border-width:1px; border-color:black; border-style:solid; width:20px; cursor:help;" onmouseover="onmousedown=farbe_an_1;farbinput=this.id" onmouseout="onmousedown=null">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+	
+<span id="farbselektor_1" style="z-index:1; display:none;">
+<script type="text/javascript">
+// <![CDATA[
+var farbinput;
+
+//farbwert festlegen
+function ini() {
+	wert = new Array(18)
+	wert[0]="00"
+	wert[1]="11"
+	wert[2]="22"
+	wert[3]="33"
+	wert[4]="44"
+	wert[5]="55"
+	wert[6]="66"
+	wert[7]="77"
+	wert[8]="88"
+	wert[9]="99"
+	wert[10]="AA"
+	wert[11]="BB"
+	wert[12]="CC"
+	wert[13]="DD"
+	wert[14]="EE"
+	wert[15]="FF"
+	wert[16]="C0" //spezial grauton "silver"
+	wert[17]="80" //spezial grauton "gray"
+}
+
+//ermittlung wo der klick erfolgt ist und farbpalette öffnen
+function farbe_an_1(Ereignis) {
+	if (!Ereignis)
+		Ereignis = window.event;
+	document.getElementById("farbselektor_1").style.left = Ereignis.clientX+"px";
+	document.getElementById("farbselektor_1").style.top = Ereignis.clientY+"px";
+	document.getElementById("farbselektor_1").style.display = "block";
+}
+
+//ausgewählte farbe in das formularfeld übernehmen und palette schliessen
+function farbe_aus_1(kw,lw,mw) {
+	document.getElementById("farbselektor_1").style.display = "none";
+	document.getElementsByName(farbinput)[0].value = "" + wert[kw] + wert[lw] + wert[mw];
+	if(document.getElementById(farbinput).style.backgroundColor) {
+		document.getElementById(farbinput).style.backgroundColor = "#" + wert[kw] + wert[lw] + wert[mw];
+	} else {
+		document.getElementsByName(farbinput)[1].style.backgroundColor = "" + wert[kw] + wert[lw] + wert[mw];
+	}
+}
+
+//erkennen welcher farbwert in das formular direkt eingegeben wurde
+function farbe_wechseln(wert_name,wert_value) {
+	if(document.getElementById(wert_name).style.backgroundColor) {
+		document.getElementById(wert_name).style.backgroundColor = wert_value;
+	} else {
+		document.getElementsByName(wert_name)[1].style.backgroundColor = wert_value;
+	}
+}
+
+//die eigentliche farbpalette
+function palette() {
+	var tabinhalt = '';
+	//cellspacing auf 0 = keinen abstand zwischen den farbfeldern
+	//cellspacing auf 1 = 1 pixel abstand zwischen den farbfeldern
+	tabinhalt += '<table border="0" cellpadding="0" cellspacing="0" style="position:relative;left:0px;top:12px; background-color:white; border-width:10px; border-color:white; border-style:solid;">';
+	tabinhalt += '';
+	for(var i=0; i<18; i++) {
+		tabinhalt += '<tr>';
+		for(var j=0; j<13; j++) {
+			if (i < 6)
+				if (j < 6) k = 5;
+				else k = 4;
+			if ((i > 5) && (i < 12))
+				if (j < 6) k = 2;
+				else k = 3;
+			if (i > 11)
+				if (j < 6) k = 1;
+				else k = 0;
+			if (i < 6) l = 5 - i;
+			if ((i > 5) && (i < 12)) l = i - 6;
+			if (i > 11) l = 17 - i;
+			if (j < 6) m = j;
+			else m = 11 - j;
+
+			if (j==12) {
+				k = l = m = 17-i;
+			} else {
+				k *= 3;
+				l *= 3;
+				m *= 3;
+			}
+			farb = "" + wert[k] + wert[l] + wert[m];
+			tabinhalt += '<td bgcolor="#' + farb + '">';
+			tabinhalt += '<a href="JavaScript:farbe_aus_1(' + k + ',' + l + ',' + m + ')" title="">';
+			//width und height = grösse der einzelnen farbfelder in pixel
+			tabinhalt += '<img src="includes/watermark/images/blank.gif" width="14" height="14" border="0" alt=""></a></td>';
+		}
+		tabinhalt += '</tr>';
+	}
+	tabinhalt += '</table>';
+	document.writeln(tabinhalt);
+	tabinhalt = null;
+}
+
+ini();
+palette();
+
+// ]]>
+</script>
+</span>
+       </label>		
+       </dd>
+    </dl>
+
+
+	<dl>
+		<dt><label>{L_AAW_TEXT_POSITION}</label></dt>
+		<dd>
+		<label><input type="radio" name="poswmuser" value="TL" /></label>
+		<label><input type="radio" name="poswmuser" value="TM" /></label>
+		<label><input type="radio" name="poswmuser" value="TR" /></label>{L_AAW_TOP}
+		<br />
+		<label><input type="radio" name="poswmuser" value="BL" checked="checked" /></label>
+		<label><input type="radio" name="poswmuser" value="BM" /></label>
+		<label><input type="radio" name="poswmuser" value="BR" /></label>{L_AAW_BOTTOM}	
+		</dd>
+	</dl>
+
+	<dl>
+       <dt><label>{L_AAW_TEXT_FONT}</label></dt>
+	   <dd><label>	
+       <select name="fontwmuser">
+       <!-- BEGIN fontfile -->
+       <option value="{fontfile.FONTFILE}">{fontfile.FONTNAME}</option>
+       <!-- END fontfile -->
+       </select>
+       </label>	
+	   </dd>
+	</dl>
+
+	
+	<dl>
+        <dt><label>{L_AAW_INFO}</label></dt>
+        <dd>{L_AAW_INFO_LABEL_U_M}</dd>
+    </dl>
+	
+    </div>
+	<!-- ENDIF -->
+	
+	<hr style="border: 1px;color:#5F9BCF;background-color:#5F9BCF;" />
+	
+	<dl>
+		<dt><label><span style="cursor:pointer;color:#28313F" onmouseover="this.style.color='#3366AA'" onmouseout="this.style.color='#28313F'" onclick="spoile('id2');">{L_AAW_PRIVATE_MODE}</span></label></dt>
+		<dd>
+		<label>{L_AAW_PRIVATE_MODE_LABEL}</label>
+		</dd>
+	</dl>  
+ 
+    <div id="id2" style="display:none;">	
+
+	<dl>
+		<dt><label>{L_AAW_ENABLE_MODE}</label></dt>
+		<dd>
+		<label><input type="radio" name="watermarkyes" value="privat" /></label>
+		</dd>
+	</dl>
+
+	<dl>
+		<dt><label>{L_AAW_TEXT_SIZE}</label></dt>
+		<dd>
+		<label><input type="radio" name="sizwm" value="50" />{L_AAW_MINI}</label>
+		<label><input type="radio" name="sizwm" value="40" checked="checked" />{L_AAW_MIDI}</label>
+		<label><input type="radio" name="sizwm" value="20" />{L_AAW_MEDIUM}</label>
+		<label><input type="radio" name="sizwm" value="10" />{L_AAW_MAXI}</label>	
+		<label><input type="radio" name="sizwm" value="5" />{L_AAW_HEAVY}</label>
+		</dd>
+	</dl>
+	
+    <dl>
+       <dt><label>{L_AAW_TEXT_COLOR}</label></dt>
+       <dd>
+       <label><input style="position:relative;top:2px;" type="text" name="farbe_2" value="FFFFFF" maxlength="7" size="7" onchange="farbe_wechseln(this.name,this.value)" /> <span id="farbe_2" style="background-color:#FFFFFF; border-width:1px; border-color:black; border-style:solid; width:20px; cursor:help;" onmouseover="onmousedown=farbe_an_2;farbinput=this.id" onmouseout="onmousedown=null">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+	
+<span id="farbselektor_2" style="z-index:1; display:none;">
+<script type="text/javascript">
+// <![CDATA[
+var farbinput;
+
+//farbwert festlegen
+function ini() {
+	wert = new Array(18)
+	wert[0]="00"
+	wert[1]="11"
+	wert[2]="22"
+	wert[3]="33"
+	wert[4]="44"
+	wert[5]="55"
+	wert[6]="66"
+	wert[7]="77"
+	wert[8]="88"
+	wert[9]="99"
+	wert[10]="AA"
+	wert[11]="BB"
+	wert[12]="CC"
+	wert[13]="DD"
+	wert[14]="EE"
+	wert[15]="FF"
+	wert[16]="C0" //spezial grauton "silver"
+	wert[17]="80" //spezial grauton "gray"
+}
+
+//ermittlung wo der klick erfolgt ist und farbpalette öffnen
+function farbe_an_2(Ereignis) {
+	if (!Ereignis)
+		Ereignis = window.event;
+	document.getElementById("farbselektor_2").style.left = Ereignis.clientX+"px";
+	document.getElementById("farbselektor_2").style.top = Ereignis.clientY+"px";
+	document.getElementById("farbselektor_2").style.display = "block";
+}
+
+//ausgewählte farbe in das formularfeld übernehmen und palette schliessen
+function farbe_aus_2(kw,lw,mw) {
+	document.getElementById("farbselektor_2").style.display = "none";
+	document.getElementsByName(farbinput)[0].value = "" + wert[kw] + wert[lw] + wert[mw];
+	if(document.getElementById(farbinput).style.backgroundColor) {
+		document.getElementById(farbinput).style.backgroundColor = "#" + wert[kw] + wert[lw] + wert[mw];
+	} else {
+		document.getElementsByName(farbinput)[1].style.backgroundColor = "" + wert[kw] + wert[lw] + wert[mw];
+	}
+}
+
+//erkennen welcher farbwert in das formular direkt eingegeben wurde
+function farbe_wechseln(wert_name,wert_value) {
+	if(document.getElementById(wert_name).style.backgroundColor) {
+		document.getElementById(wert_name).style.backgroundColor = wert_value;
+	} else {
+		document.getElementsByName(wert_name)[1].style.backgroundColor = wert_value;
+	}
+}
+
+//die eigentliche farbpalette
+function palette() {
+	var tabinhalt = '';
+	//cellspacing auf 0 = keinen abstand zwischen den farbfeldern
+	//cellspacing auf 1 = 1 pixel abstand zwischen den farbfeldern
+	tabinhalt += '<table border="0" cellpadding="0" cellspacing="0" style="position:relative;left:0px;top:12px; background-color:white; border-width:10px; border-color:white; border-style:solid;">';
+	tabinhalt += '';
+	for(var i=0; i<18; i++) {
+		tabinhalt += '<tr>';
+		for(var j=0; j<13; j++) {
+			if (i < 6)
+				if (j < 6) k = 5;
+				else k = 4;
+			if ((i > 5) && (i < 12))
+				if (j < 6) k = 2;
+				else k = 3;
+			if (i > 11)
+				if (j < 6) k = 1;
+				else k = 0;
+			if (i < 6) l = 5 - i;
+			if ((i > 5) && (i < 12)) l = i - 6;
+			if (i > 11) l = 17 - i;
+			if (j < 6) m = j;
+			else m = 11 - j;
+
+			if (j==12) {
+				k = l = m = 17-i;
+			} else {
+				k *= 3;
+				l *= 3;
+				m *= 3;
+			}
+			farb = "" + wert[k] + wert[l] + wert[m];
+			tabinhalt += '<td bgcolor="#' + farb + '">';
+			tabinhalt += '<a href="JavaScript:farbe_aus_2(' + k + ',' + l + ',' + m + ')" title="">';
+			//width und height = grösse der einzelnen farbfelder in pixel
+			tabinhalt += '<img src="includes/watermark/images/blank.gif" width="14" height="14" border="0" alt=""></a></td>';
+		}
+		tabinhalt += '</tr>';
+	}
+	tabinhalt += '</table>';
+	document.writeln(tabinhalt);
+	tabinhalt = null;
+}
+
+ini();
+palette();
+
+// ]]>
+</script>
+</span>
+        </label>		
+        </dd>
+    </dl>
+
+	<dl>
+		<dt><label>{L_AAW_TEXT_DEGREE}</label></dt>
+		<dd>
+		<label><input type="radio" name="degwm" value="0" checked="checked" />{L_AAW_000}</label>
+		<label><input type="radio" name="degwm" value="45" />{L_AAW_045}</label>
+		<label><input type="radio" name="degwm" value="90" />{L_AAW_090}</label>
+		<br />
+		<label><input type="radio" name="degwm" value="135" />{L_AAW_135}</label>
+		<label><input type="radio" name="degwm" value="180" />{L_AAW_180}</label>
+		<label><input type="radio" name="degwm" value="225" />{L_AAW_225}</label>
+		<br />
+		<label><input type="radio" name="degwm" value="270" />{L_AAW_270}</label>
+		<label><input type="radio" name="degwm" value="315" />{L_AAW_315}</label>
+		<label><input type="radio" name="degwm" value="360" />{L_AAW_360}</label>		
+		</dd>
+	</dl>
+
+	<dl>
+		<dt><label>{L_AAW_TEXT_POSITION}</label></dt>
+		<dd>
+		<label><input type="radio" name="poswm" value="TL" /></label>
+		<label><input type="radio" name="poswm" value="TM" /></label>
+		<label><input type="radio" name="poswm" value="TR" /></label>{L_AAW_TOP}
+		<br />
+		<label><input type="radio" name="poswm" value="CL" /></label>
+		<label><input type="radio" name="poswm" value="C" /></label>
+		<label><input type="radio" name="poswm" value="CR" /></label>{L_AAW_CENTER}
+		<br />
+		<label><input type="radio" name="poswm" value="BL" checked="checked" /></label>
+		<label><input type="radio" name="poswm" value="BM" /></label>
+		<label><input type="radio" name="poswm" value="BR" /></label>{L_AAW_BOTTOM}	
+		</dd>
+	</dl>
+
+	<dl>
+        <dt><label>{L_AAW_TEXT_FONT}</label></dt>
+		<dd>
+        <label>	
+        <select name="fontwm">
+        <!-- BEGIN fontfile -->
+        <option value="{fontfile.FONTFILE}">{fontfile.FONTNAME}</option>
+        <!-- END fontfile -->
+        </select>
+        </label>	
+		</dd>
+    </dl>
+
+    <dl>
+        <dt><label for="watermarktext">{L_AAW_WATER_TEXT}</label></dt>
+        <dd><textarea name="watermarktext" id="watermarktext" rows="1" cols="40" class="inputbox autowidth" onkeyup="resizeTextArea(this, 1);"></textarea></dd>
+    </dl>
+	
+	<dl>
+        <dt><label>{L_AAW_INFO}</label></dt>
+        <dd>{L_AAW_WATER_TEXT_LABEL_1} {WM_TEXT_DEMO}
+		<br /><br />{L_AAW_WATER_TEXT_LABEL_2}</dd>
+    </dl>
+	
+    </div>
+
+    <hr style="border: 1px;color:#5F9BCF;background-color:#5F9BCF;" />
+	
+	<br />	

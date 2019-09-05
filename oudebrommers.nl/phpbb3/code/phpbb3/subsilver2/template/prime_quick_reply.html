@@ -1,0 +1,95 @@
+<!-- IF QUICK_REPLY_ALLOWED -->
+<!-- DEFINE $S_SIGNATURE = TRUE -->
+<!-- IF PRIME_CAPTCHA_TITLE or S_CONFIRM_CODE -->
+	<!-- DEFINE $CAN_HIDE_OPTIONS = false -->
+<!-- ELSE -->
+	<!-- DEFINE $CAN_HIDE_OPTIONS = true -->
+<!-- ENDIF -->
+<script type="text/javascript">
+// <![CDATA[
+	var LA_TOO_FEW_CHARS	= "{LA_QUICK_REPLY_TOO_FEW_CHARS}";
+	var LA_SHOW_OPTIONS		= "{LA_QUICK_REPLY_SHOW_OPTIONS}";
+	var LA_HIDE_OPTIONS		= "{LA_QUICK_REPLY_HIDE_OPTIONS}";
+	var LA_SHOW_QUICK_REPLY	= "{LA_QUICK_REPLY_SHOW}";
+	var LA_HIDE_QUICK_REPLY	= "{LA_QUICK_REPLY_HIDE}";
+	var QUICK_REPLY_COOKIE	= "{QUICK_REPLY_COOKIE_NAME}";
+	<!-- IF QUICK_REPLY_POST_IDS -->
+	var prime_post_ids		= [{QUICK_REPLY_POST_IDS}]; 
+	<!-- IF PRIME_MULTI_QUOTE -->
+	var LA_NONE_SELECTED	= "{LA_QUICK_REPLY_NO_QUOTES_SELECTED}";
+	var LA_QUOTE_SELECTED	=  "{LA_QUICK_REPLY_QUOTE_SELECTED}";
+	<!-- ENDIF -->
+	<!-- ENDIF -->
+
+	// For editor.js
+	var	form_name = 'postform';
+	var	text_name = 'message';
+// ]]>
+</script>
+<script type="text/javascript" src="{T_TEMPLATE_PATH}/editor.js" ></script>
+<script type="text/javascript" src="{T_TEMPLATE_PATH}/prime_quick_reply.js" ></script>
+<center>
+<table width="500" cellspacing="0" cellpadding="0">
+	<tr>
+		<th align="center"><h4>{L_QUICK_REPLY_POST_REPLY}</h4></th>
+	</tr>
+</table>
+
+<form name="postform" id="postform" method="post" action="{QUICK_REPLY_POST_ACTION}" onsubmit="return prime_quick_reply_check(this);"<!-- IF not QUICK_REPLY_SHOW_FORM --> style="display:none;"<!-- ENDIF -->>
+<table class="tablebg" width="500" cellspacing="1">
+	<tr class="row1">
+		<td valign="top" class="row2" width="100%">
+			<!-- IF not S_USER_LOGGED_IN --><div style="margin:2px;"><label for="username" style="float:left;width:10%;line-height:1.3;position:relative;bottom:-2px;"><b class="gensmall">{L_USERNAME}:</b></label> <input type="text" tabindex="2" name="username" id="username" size="25" maxlength="30" class="inputbox" /></div><!-- ENDIF -->
+			<!-- IF S_SUBJECT_ALLOWED --><div style="<!-- IF not QUICK_REPLY_SHOW_SUBJECT -->display:none;<!-- ENDIF -->margin:2px;" id="quick_reply_subject"><label for="subject" style="float:left;width:10%;line-height:1.3;position:relative;bottom:-2px;"><b class="gensmall">{L_SUBJECT}:</b></label> <input type="text" name="subject" id="subject" size="45" maxlength="64" tabindex="2" value="{QUICK_REPLY_SUBJECT}" class="inputbox" /></div><!-- ELSE --><input type="hidden" name="subject" id="subject" value="{QUICK_REPLY_SUBJECT}" /><!-- ENDIF -->
+			<!-- IF S_BBCODES_ALLOWED --><div style="<!-- IF not QUICK_REPLY_SHOW_BBCODES -->display:none;<!-- ENDIF -->margin:2px;" id="quick_reply_bbcodes"><table width="100%" cellspacing="0" cellpadding="0" border="0"><!-- INCLUDE posting_buttons.html --></table></div><!-- ENDIF -->
+			<!-- IF S_SMILIES_ALLOWED --><div style="<!-- IF not QUICK_REPLY_SHOW_SMILIES -->display:none;<!-- ENDIF -->margin:2px;" id="quick_reply_smilies"><!-- BEGIN smiley --> <a href="#" onclick="insert_text('{smiley.A_SMILEY_CODE}', true); return false;"><img src="{smiley.SMILEY_IMG}" width="{smiley.SMILEY_WIDTH}" height="{smiley.SMILEY_HEIGHT}" alt="{smiley.SMILEY_CODE}" title="{smiley.SMILEY_DESC}" /></a> <!-- END smiley --><!-- IF S_SHOW_SMILEY_LINK --><a href="{U_MORE_SMILIES}" onclick="window.open('{U_MORE_SMILIES}', '_phpbbsmilies', 'HEIGHT=350,resizable=yes,scrollbars=yes,WIDTH=300'); return false;">{L_QUICK_REPLY_MORE_SMILIES}</a><!-- ENDIF --></div><!-- ENDIF -->
+			<table width="100%" cellspacing="0" cellpadding="0" border="0">
+				<tr>
+					<td align="center" valign="top" style="width: 100%;">
+						<textarea name="message" id="message" rows="9" cols="76" tabindex="3" onchange="prime_quick_reply_quotes(this);" onselect="storeCaret(this); prime_quick_reply_quotes(this);" onclick="storeCaret(this); prime_quick_reply_quotes(this);" onkeyup="storeCaret(this); prime_quick_reply_quotes(this);" class="inputbox" style="width:98%;height:182px;"></textarea>
+					</td>
+					<!-- IF S_BBCODE_ALLOWED -->
+					<td width="80" align="center" valign="top" style="display:none;" id="quick_reply_palette">
+						<div style="width:80px;text-align:center;position:relative;top:-14px;">
+						<script type="text/javascript">
+						// <![CDATA[
+							colorPalette('v', 8, 3)
+							prime_quick_reply_onload(); // Needs to be located after posting_bbcodes.html, which sets window.onload
+						// ]]>
+						</script>
+						</div>
+					</td>
+					<!-- ENDIF -->
+			 	</tr>
+			</table>
+		</td>
+	</tr>
+<!-- IF not S_USER_LOGGED_IN -->
+	<!-- IF PRIME_CAPTCHA_TITLE -->
+	<tr>
+		<td class="row1"><b class="genmed">{PRIME_CAPTCHA_INSTRUCTIONS}:</b></td>
+		<td class="row2">{PRIME_CAPTCHA_KEY_PHRASE}<br /><input class="post" tabindex="4" name="{PRIME_CAPTCHA_FIELD_KEY_RESPONSE}" size="30" value="" type="text" />{PRIME_CAPTCHA_HIDDEN_FIELDS}</td>
+	</tr>
+	<!-- ENDIF -->
+	<!-- IF S_CONFIRM_CODE -->
+	<tr>
+		<td class="row1" valign="top"><b class="genmed">{L_CONFIRM_CODE}: </b><center style="margin:0.5em auto;"><input class="post" type="text" name="confirm_code" size="8" maxlength="8" /></center><span class="gensmall">{L_CONFIRM_CODE_EXPLAIN}</span></td>
+		<td class="row2" align="left">
+			<input type="hidden" name="confirm_id" value="{CONFIRM_ID}" />
+			{CONFIRM_IMAGE}
+		</td>
+	</tr>
+	<!-- ENDIF -->
+<!-- ENDIF -->
+	<tr>
+		<td class="cat" colspan="2" align="center">
+			{QUICK_REPLY_HIDDEN_FIELDS}
+			<input type="submit" name="preview" tabindex="6" value="{L_PREVIEW}" class="btnlite" onclick="document.getElementById('postform').action += '#preview';" />&nbsp;
+			<input type="submit" name="post" tabindex="5" value="{L_SUBMIT}" class="btnmain" accesskey="s" />
+		</td>
+	</tr>
+</table>
+</center>
+{S_FORM_TOKEN}
+</form>
+<!-- ENDIF -->

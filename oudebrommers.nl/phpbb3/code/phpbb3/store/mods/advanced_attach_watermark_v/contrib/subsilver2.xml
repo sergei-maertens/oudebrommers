@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml-stylesheet type="text/xsl" href="xsl/modx.prosilver.en.xsl"?>
+<!--For security purposes, please check: http
+://www.phpbb.com/mods/ for the latest version of this MOD. Although MODs are checked before being allowed in the MODs Database there is no guarantee that there are no security problems within the MOD. No support will be given for MODs not found within the MODs Database which can be found at http://www.phpbb.com/mods/-->
+<mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.5.xsd">
+	<header>
+		<license>http://opensource.org/licenses/gpl-license.php GNU General Public License v2</license>
+
+		<title lang="en">Advanced Attach Watermark</title>
+		<title lang="de">Advanced Attach Watermark</title>
+
+		<description lang="en">This Mod inserts a watermark in Attachment Pics.</description>
+		<description lang="de">Diese Mod fügt ein Wasserzeichen in Attachment Bilder ein.</description>
+
+		<author-group>
+			<author>
+				<realname>Jaques Laquardt</realname>
+				<username>4_seven</username>
+				<homepage>http://4seven.kilu.de/forum/phpbb3/</homepage>
+			</author>
+		</author-group>
+
+		<mod-version>0.1.4</mod-version>
+
+		<installation>
+			<level>intermediate</level>
+			<time>1800</time>
+			<target-version>3.0.7-PL1</target-version>
+		</installation>
+		
+		<link-group>
+			<link type="parent" href="../install.xml" lang="en">Install</link>
+			<link type="parent" href="../install.xml" lang="de">Installation</link>
+			<link type="language" href="de.xml" lang="en">German Language</link>
+			<link type="language" href="de.xml" lang="de">Deutsche Sprache</link>
+		</link-group>
+		
+	</header>
+	
+	<action-group>
+	
+		<copy>
+			<file from="root/styles/subsilver2/template/*.*" to="styles/subsilver2/template/*.*" />	
+			<file from="root/styles/subsilver2/theme/*.*" to="styles/subsilver2/theme/*.*" />
+		</copy>	
+	
+		<open src="styles/subsilver2/template/editor.js">
+			<edit>
+				<find><![CDATA[function attach_inline(index, filename)
+{
+	insert_text('[attachment=' + index + ']' + filename + '[/attachment]');
+	document.forms[form_name].elements[text_name].focus();
+}]]></find>
+				<action type="after-add"><![CDATA[/* *
+* Add inline attachment at position
+*/
+function attach_inline_img_1(convert_filename_1)
+{
+	insert_text('[img]' + convert_filename_1 + '[/img]');
+	document.forms[form_name].elements[text_name].focus();
+}
+
+/**
+* Add inline attachment at position
+*/
+function attach_inline_slide_1(convert_filename_1)
+{
+	insert_text('[img_highslide=' + convert_filename_1 + ']');
+	document.forms[form_name].elements[text_name].focus();
+}
+
+/**
+* Add inline attachment at position
+*/
+function attach_inline_slide_2(convert_filename_2)
+{
+	insert_text(convert_filename_2 + '[/img_highslide]');
+	document.forms[form_name].elements[text_name].focus();
+}]]></action>
+			</edit>
+		</open>
+
+		<open src="styles/subsilver2/template/overall_header.html">
+			<edit>
+				<find><![CDATA[</head>]]></find>
+				<action type="before-add"><![CDATA[<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+    // override Highslide settings here
+    // instead of editing the highslide.js file
+    hs.graphicsDir = 'highslide/graphics/';
+</script>
+
+<!--[if IE]><!--> 
+<link href="{T_THEME_PATH}/watermark.css" rel="stylesheet" type="text/css" />
+<!--<![endif]-->
+<script type="text/javascript" src="{T_TEMPLATE_PATH}/watermark.js"></script>]]></action>
+			</edit>
+		</open>
+
+		<open src="styles/subsilver2/template/posting_attach_body.html">
+			<edit>
+				<find><![CDATA[<tr> 
+	<td class="row1"><b class="genmed">{L_FILENAME}</b></td>]]></find>
+				<action type="before-add"><![CDATA[	<!-- IF S_WM_SPECIAL_ON_OFF -->
+	<!-- IF S_HIDE_GROUP_WM -->	
+	<!-- INCLUDE posting_wm_us_pr_body.html -->
+	<!-- ENDIF -->
+	<!-- ENDIF -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[<!-- IF S_HAS_ATTACHMENTS -->]]></find>
+				<action type="before-add"><![CDATA[<!-- INCLUDE posting_wm_switch_body.html -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[<td class="row2"><a class="genmed" href="{attach_row.U_VIEW_ATTACHMENT}" target="_blank">{attach_row.FILENAME}</a></td>]]></find>
+				<action type="replace-with"><![CDATA[			<td class="row2"><!-- IF attach_row.S_CONVERT_NO_PIC_DATA and not S_TO_BIG_FOR_WATERMARK and (S_NO_INSERT_AS_IMG_BUTTON or S_NO_INSERT_AS_IMG_C_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_C_BUTTON) -->
+			<hr />
+			<a class="genmed" href="{attach_row.U_VIEW_ATTACHMENT}" target="_blank" title="" >
+			<img style="max-height:100px;" src="<!-- IF attach_row.S_EXISTS_IMG and not attach_row.S_EXISTS_IMG_HIGH_THUMB -->{attach_row.CONVERT_IMG}<!-- ENDIF --><!-- IF attach_row.S_EXISTS_IMG_HIGH_THUMB -->{attach_row.CONVERT_IMG_HIGH_THUMB}<!-- ENDIF -->" alt="{attach_row.FILENAME}" /></a>&nbsp;&nbsp;{attach_row.FILENAME}
+			<br />
+			<!-- ELSE -->
+			<hr />
+			<br />
+			<a class="genmed" href="{attach_row.U_VIEW_ATTACHMENT}" target="_blank" title="" >{attach_row.FILENAME}</a>
+			<br />
+			<!-- ENDIF --></td>]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[<td><input class="btnlite" type="submit" style="width:150px" name="delete_file[{attach_row.ASSOC_INDEX}]" value="{L_DELETE_FILE}" /></td>]]></find>
+				<action type="replace-with"><![CDATA[<td><input class="btnlite" type="submit" style="width:150px" name="delete_file[{attach_row.ASSOC_INDEX}]" value="{L_DELETE_FILE}" <!-- IF  not S_TO_BIG_FOR_WATERMARK --><!-- IF attach_row.S_CONVERT_NO_PIC_DATA --><!-- IF S_NO_INSERT_AS -->title="{L_NO_DEL_TITLE}"<!-- ENDIF --><!-- ENDIF --><!-- ENDIF --> /></td>]]></action>
+			</edit>			
+		</open>
+	
+		<open src="styles/subsilver2/template/posting_body.html">
+			<edit>
+				<find><![CDATA[<td class="row2"><select name="attachments">{S_INLINE_ATTACHMENT_OPTIONS}</select>&nbsp;<input type="button" class="btnbbcode" accesskey="a" value="{L_PLACE_INLINE}" name="attachinline" onclick="attach_form = document.forms[form_name].elements['attachments']; attach_inline(attach_form.value, attach_form.options[attach_form.selectedIndex].text);" onmouseover="helpline('a')" onmouseout="helpline('tip')" />]]></find>
+				<action type="replace-with"><![CDATA[		  <td class="row2">
+		  <!-- IF S_NO_INSERT_AS_IMG_BUTTON or S_NO_INSERT_AS_IMG_C_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_C_BUTTON -->
+		  <div style="color:grey; position:relative; bottom:2px">{L_WM_NOTE_2}</div>
+		  <!-- ENDIF -->
+
+		  <!-- BEGIN attach_row -->
+         
+		  <!-- IF attach_row.S_CONVERT_NO_PIC_DATA and  not S_TO_BIG_FOR_WATERMARK and (S_NO_INSERT_AS_IMG_BUTTON or S_NO_INSERT_AS_IMG_C_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_C_BUTTON) -->
+		  <hr />
+		  <a class="genmed" href="{attach_row.U_VIEW_ATTACHMENT}" target="_blank" title="" >
+		  <img style="max-height:100px;" src="<!-- IF attach_row.S_EXISTS_IMG and not attach_row.S_EXISTS_IMG_HIGH_THUMB -->{attach_row.CONVERT_IMG}<!-- ENDIF --><!-- IF attach_row.S_EXISTS_IMG_HIGH_THUMB -->{attach_row.CONVERT_IMG_HIGH_THUMB}<!-- ENDIF -->" alt="{attach_row.FILENAME}" /></a>&nbsp;&nbsp;{attach_row.FILENAME}
+		  <br /> <br />
+		  <!-- ELSE -->
+		  <hr />
+		  <br />
+		  <a class="genmed" href="{attach_row.U_VIEW_ATTACHMENT}" target="_blank" title="" >{attach_row.FILENAME}</a>
+		  <br /> <br />
+		  <!-- ENDIF -->
+         
+		  <input type="button" class="btnbbcode" value="{L_PLACE_INLINE} <!-- IF S_TO_BIG_FOR_WATERMARK -->{L_MINUS_WM}<!-- ELSE --><!-- IF attach_row.S_CONVERT_NO_PIC_DATA and not S_WATERMARK_ON --><!-- IF S_NO_INSERT_AS or S_NO_INSERT_RESIZE_ONLY -->{L_MINUS_WM}<!-- ELSE --><!-- IF S_WATERMARK_ON or S_NO_INSERT_RESIZE -->{L_PLUS_WM}<!-- ENDIF --><!-- ENDIF --><!-- ENDIF --><!-- IF  S_WATERMARK_ON -->{L_PLUS_WM}<!-- ENDIF --><!-- ENDIF -->" onclick="attach_inline({attach_row.ASSOC_INDEX}, '{attach_row.A_FILENAME}');" <!-- IF  not S_TO_BIG_FOR_WATERMARK --><!-- IF attach_row.S_CONVERT_NO_PIC_DATA --><!-- IF S_NO_INSERT_AS -->title="{L_WITHOUT_WATERMARK_TITLE}"<!-- ENDIF --><!-- ENDIF --><!-- ENDIF --> />&nbsp;
+               
+		  <!-- IF  not S_TO_BIG_FOR_WATERMARK -->
+		  <!-- IF attach_row.S_CONVERT_NO_PIC_DATA -->
+		  <!-- IF S_NO_INSERT_AS_IMG_BUTTON or S_NO_INSERT_AS_IMG_C_BUTTON -->
+		  <input type="button" class="btnbbcode" onclick="attach_inline_img_1('{attach_row.CONVERT_IMG}')" value="{L_INSERT_AS_IMG} <!-- IF S_NO_INSERT_AS_IMG_C_BUTTON -->{L_PLUS_WM}<!-- ELSE -->{L_MINUS_WM}<!-- ENDIF -->" title="{L_DEL_AFTER_INSERT_1_TITLE}" />&nbsp;
+		  <!-- ENDIF -->
+
+		  <!-- IF S_NO_INSERT_AS_HIGHSLIDE_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_C_BUTTON -->
+		  <input type="button" class="btnbbcode" onclick="attach_inline_slide_1('{attach_row.CONVERT_IMG_HIGH_THUMB}'); attach_inline_slide_2('{attach_row.CONVERT_IMG_HIGH}')" value="{L_INSERT_AS_SLIDE} <!-- IF S_NO_INSERT_AS_HIGHSLIDE_C_BUTTON -->{L_PLUS_WM}<!-- ELSE -->{L_MINUS_WM}<!-- ENDIF -->" title="{L_DEL_AFTER_INSERT_2_TITLE}" />&nbsp;
+		  <!-- ENDIF -->
+		  <!-- ENDIF -->
+		  <!-- ENDIF -->
+		  <br /><br />
+				   
+		  <!-- END attach_row -->]]></action>
+			</edit>
+		</open>
+		<diy-instructions lang="en">Clear after install all Board-, Style- and Browser-Caches</diy-instructions>	
+		<diy-instructions lang="de">Leere nach der Installation alle Board-, Style- und Browser-Caches</diy-instructions>	
+	</action-group>
+</mod>

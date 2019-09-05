@@ -1,0 +1,15 @@
+/* Share On 2.2.0 */
+.facebook-icon, .facebook-icon a	{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_facebook.png"); }
+.twitter-icon, .twitter-icon a		{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_twitter.png"); }
+.tuenti-icon, .tuenti-icon a		{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_tuenti.png"); }
+.sonico-icon, .sonico-icon a		{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_sonico.png"); }
+.friendfeed-icon, .friendfeed-icon a	{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_friendfeed.png"); }
+.orkut-icon, .orkut-icon a		{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_orkut.gif"); }
+.digg-icon, .digg-icon a		{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_digg.gif"); }
+.reddit-icon, .reddit-icon a		{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_reddit.png"); }
+.delicious-icon, .delicious-icon a	{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_delicious.gif"); }
+.vk-icon, .vk-icon a				{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_vk.png"); }
+.myspace-icon, .myspace-icon a		{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_myspace.png"); }
+.tumblr-icon, .tumblr-icon a		{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_tumblr.png"); }
+.google-icon, .google-icon a		{ background-image: url("{T_THEME_PATH}/images/share_on_buttons/shareon_google.gif"); }
+/* Share On 2.2.0 */

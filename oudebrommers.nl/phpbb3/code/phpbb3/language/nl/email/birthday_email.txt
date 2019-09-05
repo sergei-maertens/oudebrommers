@@ -1,0 +1,7 @@
+Onderwerp: Gelukkige verjaardag {USERNAME}! 
+
+Beste {USERNAME},
+
+Het oudebrommers-team wenst je een gelukkige verjaardag !!
+
+{EMAIL_SIG}

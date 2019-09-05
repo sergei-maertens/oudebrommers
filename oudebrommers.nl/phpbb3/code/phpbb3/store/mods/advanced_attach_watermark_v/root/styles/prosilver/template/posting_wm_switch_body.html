@@ -1,0 +1,108 @@
+    <!-- IF not S_WM_SPECIAL_ON_OFF or not S_HIDE_GROUP_WM -->
+    <script type="text/javascript">
+    // <![CDATA[
+    function getMax(anumber, another) {
+        return((anumber> another) ? anumber : another);
+    }
+    function resizeTextArea(t, minRows, minCols) {
+        t.rows = minRows;
+        t.setAttribute("wrap", "off");
+        t.style.overflow = "auto";
+        lines = t.value.split("\n");
+		
+        if (arguments.length> 2) {
+            t.cols = minCols;
+            maxChars = lines[0].length;
+            for(i = 1; i <lines.length; i++) {
+                currentLength = lines[i].length;
+                if (currentLength> maxChars) maxChars = currentLength;
+            }
+            t.cols = getMax(maxChars, minCols);
+        }
+        t.rows = getMax(lines.length + 1, minRows);
+    }
+    // ]]>
+    </script>
+	
+    <script type="text/javascript">
+	// <![CDATA[
+      function spoile(id){
+       if (document.getElementById) {
+        var s = document.getElementById(id);
+        s.style.display = (s.style.display=='block'?'none':'block');
+        } 
+      }
+	 // ]]>
+    </script>
+    <!-- ENDIF -->
+
+    <!-- IF (S_WM_ONOFF or S_WM_CONVERT or S_WM_CONVERT_HIGH) -->
+			<hr style="border: 1px;color:#5F9BCF;background-color:#5F9BCF;" />
+			
+			<dl>
+            <dt><label>{L_AAW_WATERMARKING}</label></dt>
+			<dd><!-- IF S_WM_ONOFF -->
+			[attachment]&nbsp;
+			<input type="radio" name="wmglobalattach" value="attachyes" /><span style="text-transform: lowercase;">{L_YES}</span>
+		    <input type="radio" name="wmglobalattach" value="attachno" checked="checked" /><span style="text-transform: lowercase;">{L_NO}</span>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!-- ENDIF -->
+			<!-- IF  S_WM_CONVERT -->[img]&nbsp;
+			<input type="radio" name="wmglobalimg" value="imgyes" /><span style="text-transform: lowercase;">{L_YES}</span>
+		    <input type="radio" name="wmglobalimg" value="imgno" checked="checked" /><span style="text-transform: lowercase;">{L_NO}</span>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!-- ENDIF -->
+			<!-- IF S_WM_CONVERT_HIGH -->[img_higslide]&nbsp; 
+			<input type="radio" name="wmglobalimghigh" value="imghighyes" /><span style="text-transform: lowercase;">{L_YES}</span>
+		    <input type="radio" name="wmglobalimghigh" value="imghighno" checked="checked" /><span style="text-transform: lowercase;">{L_NO}</span>
+			<!-- ENDIF -->
+			</dd>
+            </dl>
+	<!-- ENDIF -->		
+			
+		<!-- IF (S_WM_ONOFF or S_WM_CONVERT or S_WM_CONVERT_HIGH or S_WM_RESIZE or S_WM_RESIZE_ONLY or S_WM_CONVERT_ONLY or S_WM_CONVERT_HIGH_ONLY) -->
+			<hr style="border: 1px;color:#5F9BCF;background-color:#5F9BCF;" />
+		
+		    <dl>
+            <dt><label><span style="cursor:pointer;color:#28313F;" onmouseover="this.style.color='#3366AA'" onmouseout="this.style.color='#28313F'" onclick="spoile('id3');">{L_AAW_WATERMARK_INFO}</span></label></dt>
+            <dd>{L_AAW_WATERMARK_INFO_LABEL}</dd>
+            </dl> 
+			
+            <div id="id3" style="display:none;">
+
+		    <dl>
+            <dt><label>{L_AAW_WATERMARK_MODE}</label></dt>
+            <dd><strong>{WM_TYPE_DEMO}</strong><!-- IF S_WM_GLOBAL_USER_ONOFF --> ({L_WM_GLOBAL_USER_ONOFF} {L_AAW_USERNAME_GL_MO_LABEL})<!-- ENDIF --></dd>
+            </dl>
+			
+			<dl>
+            <dt><label>{L_AAW_ACTIVE_FUNCTIONS}</label></dt>
+            <!-- IF S_WM_ONOFF --><dd>{WM_ONOFF}</dd><!-- ENDIF -->
+            <!-- IF S_WM_RESIZE_ONLY --><dd>{WM_RESIZE_ONLY}</dd><!-- ENDIF -->
+			<!-- IF S_WM_RESIZE --><dd>{WM_RESIZE}</dd><!-- ENDIF -->
+			<!-- IF S_WM_CONVERT_ONLY --><dd>{WM_CONVERT_ONLY} </dd><!-- ENDIF -->
+			<!-- IF S_WM_CONVERT --><dd>{WM_CONVERT}</dd><!-- ENDIF -->
+			<!-- IF S_WM_CONVERT_HIGH_ONLY --><dd>{WM_CONVERT_HIGH_ONLY}</dd><!-- ENDIF -->
+			<!-- IF S_WM_CONVERT_HIGH --><dd>{WM_CONVERT_HIGH}</dd><!-- ENDIF -->			    
+            </dl>
+			
+ 			<dl>
+            <dt><label>{L_AAW_RESIZE_WIDTH}</label></dt>
+            <dd>{WM_RESIZE_WIDTH}</dd>
+            </dl>
+			
+			<dl>
+            <dt><label>{L_AAW_MAX_WM_SIZE}</label></dt>
+            <dd>{MAX_WM_SIZE}</dd>
+            </dl>
+			
+			<dl>
+            <dt><label>{L_AAW_MEMORY_LIMIT}</label></dt>
+            <dd>{MEMORY_LIMIT}</dd>
+            </dl>
+			
+			<dl>
+            <dt><label>{L_AAW_MEMORY_USAGE}</label></dt>
+            <dd>{MEMORY_USAGE}</dd>
+            </dl>
+
+			</div>
+			<!-- ENDIF -->

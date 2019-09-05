@@ -1,0 +1,1 @@
+DELETE FROM phpbb4_bbcodes WHERE bbcode_tag = 'img_highslide=';

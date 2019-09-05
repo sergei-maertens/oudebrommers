@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="modx.prosilver.en.xsl"?>
+<!--NOTICE: Please open this file in your web browser. If presented with a security warning, you may safely tell it to allow the blocked content.-->
+<!--For security purposes, please check: http://www.phpbb.com/mods/ for the latest version of this MOD.\nAlthough MODs are checked before being allowed in the MODs Database there is no guarantee that there are no security problems within the MOD.\nNo support will be given for MODs not found within the MODs Database which can be found at http://www.phpbb.com/mods/-->
+<mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.5.xsd">
+	<header>
+		<meta name="generator" content="MODX file generated with PP MODX Creator by tumba25 (online version)"/>
+		<license><![CDATA[http://opensource.org/licenses/gpl-license.php GNU General Public License v2]]></license>
+		<title lang="en"><![CDATA[User Mention MOD]]></title>
+		<description lang="en"><![CDATA[If some user calls you in own message you will get a PM about it.]]></description>
+		<author-group>
+			<author>
+				<realname><![CDATA[Dariusz Maciejewski]]></realname>
+				<username><![CDATA[daroPL]]></username>
+				<homepage><![CDATA[http://www.phpbb.pl]]></homepage>
+				<email><![CDATA[dariuszwm@gmail.com]]></email>
+			</author>
+		</author-group>
+		<mod-version>1.0.4</mod-version>
+		<installation>
+			<level>easy</level>
+			<time>300</time>
+			<target-version>3.0.9</target-version>
+		</installation>
+		<link-group>
+			<link type="language" href="contrib/pl.xml" lang="pl">Instalacja moda</link>
+			<link type="template" href="contrib/subsilver2.xml" lang="en">subSilver2</link>
+		</link-group>
+	</header>
+	<action-group>
+		<sql><![CDATA[ALTER TABLE phpbb_users ADD user_notify_mention tinyint(1) UNSIGNED DEFAULT '0' NOT NULL;]]></sql>
+		<copy>
+			<file from="root/language/en/mods/user_mention.php" to="language/en/mods/user_mention.php"/>
+		</copy>
+		<open src="posting.php">
+			<edit>
+				<find><![CDATA[$user->setup(array('posting', 'mcp', 'viewtopic'), $post_data['forum_style']);]]></find>
+				<action type="after-add"><![CDATA[$user->add_lang('mods/user_mention');]]></action>
+			</edit>
+		</open>
+		<open src="includes/functions_posting.php">
+			<edit>
+				<find><![CDATA[/**
+* User Notification
+*/]]></find>
+				<action type="before-add"><![CDATA[/*
+ * Notify users mentioned in a post message
+ */
+function user_mention($topic_title, $forum_id, $topic_id, $post_id, $subject, $message)
+{
+	global $phpEx, $db, $user, $phpbb_root_path;
+	
+	$pattern = '/@((\&quot\;(.+?)\&quot\;)|(.[^ ]+))\s{0,}/';
+	
+	$users = array();
+	
+	preg_match_all($pattern, $message, $msg_matches);
+	foreach ($msg_matches[1] as $match)
+	{
+		$users[] = str_replace('&quot;', '', $match);
+	}
+	
+	preg_match_all($pattern, $subject, $sb_matches);
+	foreach ($sb_matches[1] as $match)
+	{
+		$users[] = str_replace('&quot;', '', $match);
+	}
+	
+	$users = array_unique($users);
+
+	if (!sizeof($users))
+	{
+		return;
+	}
+	
+	$users = array_map('utf8_clean_string', $users);
+	$users = array_map(array($db, 'sql_escape'), $users);
+
+	$sql = 'SELECT user_id, user_notify_mention
+		FROM ' . USERS_TABLE . '
+		WHERE ' . $db->sql_in_set('username_clean', $users);
+	$result = $db->sql_query($sql);
+			
+	$address_list = array();
+	while ($row = $db->sql_fetchrow($result))
+	{
+		if ($row['user_notify_mention'] && ($row['user_id'] != $user->data['user_id']))
+		{
+			$address_list['u'] = array($row['user_id'] => 'to');
+		}
+	}
+	$db->sql_freeresult($result);
+	unset($users);
+	
+	if (!isset($address_list['u']) || !sizeof($address_list['u']))
+	{
+		return;
+	}
+	
+	if (!class_exists('parse_message'))
+	{
+		include($phpbb_root_path . 'includes/message_parser.' . $phpEx);	
+	}
+	
+	$message_parser = new parse_message();
+
+	$post_url = append_sid("{$phpbb_root_path}viewtopic.$phpEx", "p=$post_id#p$post_id");
+	$topic_url = append_sid("{$phpbb_root_path}viewtopic.$phpEx", "f=$forum_id&amp;t=$topic_id");
+	
+	$message_parser->message = sprintf($user->lang['USER_MENTIONED_PM'], '<a href="' . $topic_url . '">', $topic_title, '</a>', '<a href="' . $post_url . '">', '</a>');
+	
+	$message_parser->parse(true, true, true, false, false, true, true);
+
+	$pm_data = array(
+		'from_user_id'			=> $user->data['user_id'],
+		'from_user_ip'			=> $user->ip,
+		'from_username'			=> $user->data['username'],
+		'enable_sig'			=> false,
+		'enable_bbcode'			=> true,
+		'enable_smilies'		=> true,
+		'enable_urls'			=> false,
+		'icon_id'				=> 0,
+		'bbcode_bitfield'		=> $message_parser->bbcode_bitfield,
+		'bbcode_uid'			=> $message_parser->bbcode_uid,
+		'message'				=> $message_parser->message,
+		'address_list'			=> $address_list,
+	);
+
+	if (!function_exists('functions_privmsgs'))
+	{
+		include($phpbb_root_path . 'includes/functions_privmsgs.' . $phpEx);
+	}
+	
+	submit_pm('post', $user->lang['USER_MENTIONED'], $pm_data, false);			
+}]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	$data['topic_title'] = truncate_string($data['topic_title']);]]></find>
+				<action type="after-add"><![CDATA[	$message_um = $data['message'];
+	$subject_um = $subject;
+	
+	$pattern = '/@\&quot\;(.+?)\&quot\;/';
+	$replacement = '@\1';
+	$data['message'] = preg_replace($pattern, $replacement, $data['message']);
+	$data['topic_title'] = preg_replace($pattern, $replacement, $data['topic_title']);
+	$subject = preg_replace($pattern, $replacement, $subject);]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		user_notification($mode, $subject, $data['topic_title'], $data['forum_name'], $data['forum_id'], $data['topic_id'], $data['post_id']);]]></find>
+				<action type="after-add"><![CDATA[		if (($mode == 'reply' || $mode == 'post') && $post_approval)
+		{
+			user_mention($data['topic_title'], $data['forum_id'], $data['topic_id'], $data['post_id'], $subject_um, $message_um);
+		}]]></action>
+			</edit>
+		</open>
+		<open src="includes/ucp/ucp_prefs.php">
+			<edit>
+				<find><![CDATA[			case 'personal':]]></find>
+				<action type="after-add"><![CDATA[				$user->add_lang('mods/user_mention');]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					'notifypm'		=> request_var('notifypm', (bool) $user->data['user_notify_pm']),]]></find>
+				<action type="after-add"><![CDATA[					'notifymention'		=> request_var('notifymention', (bool) $user->data['user_notify_mention']),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							'user_notify_pm'		=> $data['notifypm'],]]></find>
+				<action type="after-add"><![CDATA[							'user_notify_mention'		=> $data['notifymention'],]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					'S_NOTIFY_PM'		=> $data['notifypm'],]]></find>
+				<action type="after-add"><![CDATA[					'S_NOTIFY_MENTION'		=> $data['notifymention'],]]></action>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/ucp_prefs_personal.html">
+			<edit>
+				<find><![CDATA[	<dl>
+		<dt><label for="popuppm0">{L_POPUP_ON_PM}:</label></dt>
+		<dd>
+			<label for="popuppm1"><input type="radio" name="popuppm" id="popuppm1" value="1"<!-- IF S_POPUP_PM --> checked="checked"<!-- ENDIF --> /> {L_YES}</label> 
+			<label for="popuppm0"><input type="radio" name="popuppm" id="popuppm0" value="0"<!-- IF not S_POPUP_PM --> checked="checked"<!-- ENDIF --> /> {L_NO}</label>
+		</dd>
+	</dl>]]></find>
+				<action type="after-add"><![CDATA[	<dl>
+		<dt><label for="notifymention1">{L_NOTIFY_ON_MENTION}:</label></dt>
+		<dd>
+			<label for="notifymention1"><input type="radio" name="notifymention" id="notifymention1" value="1"<!-- IF S_NOTIFY_MENTION --> checked="checked"<!-- ENDIF --> /> {L_YES}</label> 
+			<label for="notifymention0"><input type="radio" name="notifymention" id="notifymention0" value="0"<!-- IF not S_NOTIFY_MENTION --> checked="checked"<!-- ENDIF --> /> {L_NO}</label>
+		</dd>
+	</dl>]]></action>
+			</edit>
+		</open>
+		<diy-instructions lang="en"><![CDATA[Purge the cache!]]></diy-instructions>
+	</action-group>
+</mod>

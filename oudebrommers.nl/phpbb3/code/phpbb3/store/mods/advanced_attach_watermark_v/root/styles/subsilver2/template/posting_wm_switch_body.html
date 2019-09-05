@@ -1,0 +1,117 @@
+    <!-- IF not S_WM_SPECIAL_ON_OFF or not S_HIDE_GROUP_WM -->
+    <script type="text/javascript">
+    // <![CDATA[
+    function getMax(anumber, another) {
+        return((anumber> another) ? anumber : another);
+    }
+    function resizeTextArea(t, minRows, minCols) {
+        t.rows = minRows;
+        t.setAttribute("wrap", "off");
+        t.style.overflow = "auto";
+        lines = t.value.split("\n");
+		
+        if (arguments.length> 2) {
+            t.cols = minCols;
+            maxChars = lines[0].length;
+            for(i = 1; i <lines.length; i++) {
+                currentLength = lines[i].length;
+                if (currentLength> maxChars) maxChars = currentLength;
+            }
+            t.cols = getMax(maxChars, minCols);
+        }
+        t.rows = getMax(lines.length + 1, minRows);
+    }
+    // ]]>
+    </script>
+	
+    <script type="text/javascript">
+	// <![CDATA[
+      function spoile(id){
+       if (document.getElementById) {
+        var s = document.getElementById(id);
+        s.style.display = (s.style.display=='block'?'none':'block');
+        } 
+      }
+	 // ]]>
+    </script>
+	<!-- ENDIF -->
+
+  <!-- IF (S_WM_ONOFF or S_WM_CONVERT or S_WM_CONVERT_HIGH) -->
+   <tr>	
+	<td class="row1"><b class="genmed">{L_AAW_WATERMARKING}</b></td> 
+	<td class="row2">
+	        <!-- IF S_WM_ONOFF -->
+			[attachment]&nbsp;
+			<input class="wmiehack" type="radio" name="wmglobalattach" value="attachyes" /><span style="text-transform: lowercase;">{L_YES}</span>
+		    <input class="wmiehack" type="radio" name="wmglobalattach" value="attachno" checked="checked" /><span style="text-transform: lowercase;">{L_NO}</span>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!-- ENDIF -->
+			<!-- IF S_WM_CONVERT -->[img]&nbsp;
+			<input class="wmiehack" type="radio" name="wmglobalimg" value="imgyes" /><span style="text-transform: lowercase;">{L_YES}</span>
+		    <input class="wmiehack" type="radio" name="wmglobalimg" value="imgno" checked="checked" /><span style="text-transform: lowercase;">{L_NO}</span>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!-- ENDIF -->
+			<!-- IF S_WM_CONVERT_HIGH -->[img_higslide]&nbsp; 
+			<input class="wmiehack" type="radio" name="wmglobalimghigh" value="imghighyes" /><span style="text-transform: lowercase;">{L_YES}</span>
+		    <input class="wmiehack" type="radio" name="wmglobalimghigh" value="imghighno" checked="checked" /><span style="text-transform: lowercase;">{L_NO}</span><!-- ENDIF -->
+     </td>
+   </tr>	
+ <!-- ENDIF -->
+
+ <!-- IF (S_WM_ONOFF or S_WM_CONVERT or S_WM_CONVERT_HIGH or S_WM_RESIZE or S_WM_RESIZE_ONLY or S_WM_CONVERT_ONLY or S_WM_CONVERT_HIGH_ONLY) -->  
+  <tr>
+	<td class="row2" colspan="2">
+
+    <span style="position:relative;top:5px;cursor:pointer;color:#28313F" onmouseover="this.style.color='#3366AA'" onmouseout="this.style.color='#28313F'" onclick="spoile('id3');"><b class="genmed">{L_AAW_WATERMARK_INFO}</b></span>
+	
+	<span style="position:absolute;left:243px;">
+	<span style="position:relative;top:5px;">{L_AAW_WATERMARK_INFO_LABEL}</span>
+	</span>
+	
+	<br /><br /><div id="id3" style="display:none;">
+   
+<table border="0" cellspacing="0" cellpadding="2">
+
+   <tr>	
+	<td style="width:200px;" class="row2"><b class="genmed">{L_AAW_WATERMARK_MODE}</b></td> 
+	<td class="row2"><strong>{WM_TYPE_DEMO}</strong><!-- IF S_WM_GLOBAL_USER_ONOFF --> ({L_WM_GLOBAL_USER_ONOFF} {L_AAW_USERNAME_GL_MO_LABEL})<!-- ENDIF --></td>
+   </tr>	
+ 
+ <tr>			
+	<td class="row2"><b class="genmed">{L_AAW_ACTIVE_FUNCTIONS}</b></td> 
+	<td class="row2">
+	        <!-- IF S_WM_ONOFF -->{WM_ONOFF}<br /><!-- ENDIF -->
+            <!-- IF S_WM_RESIZE_ONLY -->{WM_RESIZE_ONLY}<br /><!-- ENDIF -->
+			<!-- IF S_WM_RESIZE -->{WM_RESIZE}<br /><!-- ENDIF -->
+			<!-- IF S_WM_CONVERT_ONLY -->{WM_CONVERT_ONLY}<br /><!-- ENDIF -->
+			<!-- IF S_WM_CONVERT -->{WM_CONVERT}<br /><!-- ENDIF -->
+			<!-- IF S_WM_CONVERT_HIGH_ONLY -->{WM_CONVERT_HIGH_ONLY}<br /><!-- ENDIF -->
+			<!-- IF S_WM_CONVERT_HIGH -->{WM_CONVERT_HIGH}<!-- ENDIF -->
+	</td>
+ </tr>		
+
+  <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_RESIZE_WIDTH}</b></td> 
+	<td class="row2">{WM_RESIZE_WIDTH}</td>
+ </tr>
+	
+  <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_MAX_WM_SIZE}</b></td> 
+	<td class="row2">{MAX_WM_SIZE}</td>
+ </tr>
+ 
+  <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_MEMORY_LIMIT}</b></td> 
+	<td class="row2">{MEMORY_LIMIT}</td>
+ </tr>
+
+  <tr>	
+	<td class="row2"><b class="genmed">{L_AAW_MEMORY_USAGE}</b></td> 
+	<td class="row2">{MEMORY_USAGE}</td>
+ </tr>
+ 
+ </table> 
+	
+    </div>
+	
+	</td>
+   </tr>
+ <!-- ENDIF -->

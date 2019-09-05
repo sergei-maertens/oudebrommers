@@ -19,7 +19,7 @@ RUN set -ex; \
         gd \
         opcache \
         zip \
-        mysql \
+        mysqli \
     ; \
     pecl install imagick-3.4.4; \
     docker-php-ext-enable imagick; \
@@ -39,5 +39,7 @@ RUN set -ex; \
     rm -rf /var/lib/apt/lists/*
 
 COPY start /usr/local/bin/start
+
+COPY code/phpbb3 /var/www/html/phpbb3
 
 CMD ["start"]

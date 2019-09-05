@@ -1,0 +1,235 @@
+<!-- INCLUDE overall_header.html -->
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td width="250" valign="top">
+
+<table class="tablebg" width="100%" cellspacing="1">
+<tr>
+<td class="cat"><h4>Menu</h4></td>
+</tr>
+<tr>
+<td class="row1">
+<table width="100%" height="20" border="0" cellpadding="0" cellspacing="0"><tr><td width="20">
+<img src="icon_start.gif"></td><td><a href="index.php"><p class="genmed">Start<br></td></tr></table>
+<table width="100%" height="20" border="0" cellpadding="0" cellspacing="0"><tr><td width="20">
+<img src="icon_forum.gif"></td><td><a href="phpbb3/"><p class="genmed">Forum</a><br></td></tr></table>
+<table width="100%" height="20" border="0" cellpadding="0" cellspacing="0"><tr><td width="20">
+<img src="icon_huisregels.gif"></td><td><a href="phpbb3/viewtopic.php?f=35&t=180"><p class="genmed">Huisregels</a><br></td></tr></table>
+<table width="100%" height="20" border="0" cellpadding="0" cellspacing="0"><tr><td width="20">
+<img src="icon_restauratie.gif"></td><td><a href="phpbb3/viewforum.php?f=58"><p class="genmed">Restauratie verslagen</a><br></td></tr></table>
+<table width="100%" height="20" border="0" cellpadding="0" cellspacing="0"><tr><td width="20">
+<img src="icon_techinfo.gif"></td><td><a href="phpbb3/viewforum.php?f=60"><p class="genmed">Technische informatie</a><br></td></tr></table>
+<table width="100%" height="20" border="0" cellpadding="0" cellspacing="0"><tr><td width="20">
+<img src="icon_evenementen.gif"></td><td><a href="?do=evenementen"><p class="genmed">Evenementen</a><br></td></tr></table>
+<table width="100%" height="20" border="0" cellpadding="0" cellspacing="0"><tr><td width="20">
+<img src="icon_links.gif"></td><td><a href="phpbb3/viewtopic.php?f=60&t=212"><p class="genmed">Links</a><br></td></tr></table>
+<table width="100%" height="20" border="0" cellpadding="0" cellspacing="0"><tr><td width="20">
+<img src="icon_contact.gif"></td><td><a href="?do=contact"><p class="genmed">Contact</a></td></tr></table>
+</td>
+</tr>
+</table>
+<div id="doline"></div>
+<table class="tablebg" width="100%" cellspacing="1">
+<tr>
+<td class="cat"><h4>Evenementen</h4></td>
+</tr>
+<tr>
+<td class="row1">
+<!-- PHP -->    
+$date = date("Y-m-d");
+$sql = "SELECT 
+id, titel, datumsort, datum, plaats, CASE WHEN LENGTH(titel)>38 THEN 
+CONCAT(SUBSTRING(titel,1,38), '...') 
+ELSE 
+titel 
+END AS titel 
+FROM site_evenementen 
+WHERE datumsort >= now() AND gekeurd = '1'
+ORDER BY datumsort ASC, id DESC LIMIT 7";
+$sqlquery = mysql_query($sql);
+$sqlnum = mysql_num_rows($sqlquery);
+if ($sqlnum == "0") {
+echo 'Geen evenementen momenteel';
+}
+while ($show = mysql_fetch_assoc($sqlquery)) {
+echo '<span class="genmed"><a href="?do=evenementen&id='.$show['id'].'">';
+echo $show['titel'];
+echo '</span></a><br>';
+echo '&nbsp;<i>'.$show['datum'].'/'.$show['plaats'].'</i><br>';
+}
+<!-- ENDPHP -->
+</td>
+</tr>
+</table>
+<div id="doline"></div>
+<table class="tablebg" width="100%" cellspacing="1">
+<tr>
+<td class="cat"><h4>Statistieken</h4></td>
+</tr>
+<tr>
+<td class="row1">
+<!-- IF NEWEST_USER -->
+<a href="phpbb3/search.php?search_id=newposts">Nieuwe forumberichten: {NEW_POSTS_COUNT}</a>
+<br>{TOTAL_POSTS} <br> {TOTAL_TOPICS} <br> {TOTAL_USERS} <br> {NEWEST_USER}
+<!-- ENDIF -->
+</td>
+</tr>
+</table>
+
+</td>
+<td valign="top">
+
+<!-- PHP -->
+include("incl/main.php");
+<!-- ENDPHP -->
+
+</td>
+<td width="250" valign="top">
+
+	<table class="tablebg" width="100%" cellspacing="1">
+	<tr>
+		<td class="cat"><h4>{L_WHO_IS_ONLINE}</h4></td>
+	</tr>
+	<tr>
+		<td class="row1">
+<!-- IF S_DISPLAY_ONLINE_LIST -->
+    <!-- IF U_VIEWONLINE --><!-- ELSE --><h3>{L_WHO_IS_ONLINE}<!-- ENDIF -->
+    <p>{TOTAL_USERS_ONLINE}<br /><br />{LOGGED_IN_USER_LIST}
+    <!-- IF LEGEND --><br /><em>{L_LEGEND}: {LEGEND}</em><!-- ENDIF --><br><br><center>[<a href="phpbb3/viewonline.php">Bekijk de lijst</a>]</p>
+<!-- ENDIF --> 
+	</td>
+	</tr>
+	</table>
+<div id="doline"></div>
+<table width="100%" class="tablebg" cellspacing="1">
+<tr>
+<td class="cat"><h4>Laatste forum berichten</h4></td>
+</tr>
+<tr>
+<td class="row1">
+<!-- PHP -->
+    $forum_locatie = 'phpbb3/';
+
+    include $forum_locatie . 'config.php';
+    $connection = mysql_connect($dbhost, $dbuser, $dbpasswd) or die('Connection failed');
+    mysql_select_db($dbname, $connection) or die('Selecting database failed');
+    unset($dbpasswd); // Just to be safe
+
+    $query = "SELECT topic_id, forum_id, topic_last_poster_name, topic_last_post_time, topic_title
+    FROM {$table_prefix}topics
+    WHERE forum_id != '57'
+    ORDER BY topic_last_post_time DESC
+    LIMIT 5";
+    $result = mysql_query($query, $connection) or die('Query failed');
+    $topics = array();
+    while ($data = mysql_fetch_assoc($result))
+    {
+        if (!in_array($data['topic_id'], $topics))
+        {
+            $topics[] = $data['topic_id'];
+	    $tijddatum = $data['topic_last_post_time'];
+            $datum = date("d-m-Y", $tijddatum);
+	    $tijd = date("H:i:s", $tijddatum);
+            $data['post_subject'] = str_replace('Re: ', '', $data['post_subject']);
+            echo '<span class="genmed"><a href="phpbb3/viewtopic.php?f=' . $data['forum_id'] . '&amp;t=' . $data['topic_id'] . '">' . $data['topic_title'] . '</a></span><br>';
+	    echo '&nbsp;<i>'.$data['topic_last_poster_name'].'/'.$datum.' '.$tijd.'</i><br>';
+        }
+    }
+    mysql_free_result($result);
+<!-- ENDPHP -->
+</td>
+</tr>
+</table>
+<div id="doline"></div>
+<table width="100%" cellspacing="1" class="tablebg">
+<tr>
+<td class="cat"><h4>Te koop</h4></td>
+</tr>
+<tr>
+<td class="row1">
+<!-- PHP -->
+    $forum_locatie = 'phpbb3/';
+
+    include $forum_locatie . 'config.php';
+    $connection = mysql_connect($dbhost, $dbuser, $dbpasswd) or die('Connection failed');
+    mysql_select_db($dbname, $connection) or die('Selecting database failed');
+    unset($dbpasswd); // Just to be safe
+
+    $query = "SELECT topic_id, forum_id, topic_last_poster_name, topic_last_post_time, topic_title
+    FROM {$table_prefix}topics
+    WHERE forum_id = '21'
+    ORDER BY topic_last_post_time DESC
+    LIMIT 3";
+    $result = mysql_query($query, $connection) or die('Query failed');
+    $aantal = mysql_num_rows($result);
+    $topics = array();
+    while ($data = mysql_fetch_assoc($result))
+    {
+        if (!in_array($data['topic_id'], $topics))
+        {
+            $topics[] = $data['topic_id'];
+	    $tijddatum = $data['topic_last_post_time'];
+            $datum = date("d-m-Y", $tijddatum);
+	    $tijd = date("H:i:s", $tijddatum);
+            $data['post_subject'] = str_replace('Re: ', '', $data['post_subject']);
+            echo '<span class="genmed"><a href="phpbb3/viewtopic.php?f=' . $data['forum_id'] . '&amp;t=' . $data['topic_id'] . '">' . $data['topic_title'] . '</a></span><br>';
+	    echo '<font size="1">&nbsp;<i>'.$data['topic_last_poster_name'].'/'.$datum.' '.$tijd.'</i></font><br>';
+        }
+    }
+    mysql_free_result($result);
+if ($aantal == "0") {
+echo 'Geen';
+}
+<!-- ENDPHP -->
+</td>
+</tr>
+</table>
+<div id="doline"></div>
+<table width="100%" cellspacing="1" class="tablebg">
+<tr>
+<td class="cat"><h4>Gevraagd</h4></td>
+</tr>
+<tr>
+<td class="row1">
+<!-- PHP -->
+    $forum_locatie = 'phpbb3/';
+
+    include $forum_locatie . 'config.php';
+    $connection = mysql_connect($dbhost, $dbuser, $dbpasswd) or die('Connection failed');
+    mysql_select_db($dbname, $connection) or die('Selecting database failed');
+    unset($dbpasswd); // Just to be safe
+
+    $query = "SELECT topic_id, forum_id, topic_last_poster_name, topic_last_post_time, topic_title
+    FROM {$table_prefix}topics
+    WHERE forum_id = '22'
+    ORDER BY topic_last_post_time DESC
+    LIMIT 3";
+    $result = mysql_query($query, $connection) or die('Query failed');
+    $topics = array();
+    while ($data = mysql_fetch_assoc($result))
+    {
+        if (!in_array($data['topic_id'], $topics))
+        {
+            $topics[] = $data['topic_id'];
+	    $tijddatum = $data['topic_last_post_time'];
+            $datum = date("d-m-Y", $tijddatum);
+	    $tijd = date("H:i:s", $tijddatum);
+            $data['post_subject'] = str_replace('Re: ', '', $data['post_subject']);
+            echo '<span class="genmed"><a href="phpbb3/viewtopic.php?f=' . $data['forum_id'] . '&amp;t=' . $data['topic_id'] . '">' . $data['topic_title'] . '</a></span><br>';
+	    echo '<font size="1">&nbsp;<i>'.$data['topic_last_poster_name'].'/'.$datum.' '.$tijd.'</i></font><br>';
+        }
+    }
+    mysql_free_result($result);
+<!-- ENDPHP -->
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+<!-- INCLUDE overall_footer.html -->

@@ -9,6 +9,7 @@ DIRS=(
 )
 
 for dir in "${DIRS[@]}"; do
+    mkdir -p $dir
     chown www-data $dir
 done
 

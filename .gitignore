@@ -4,3 +4,6 @@
 # deployment
 .vault_pass*.txt
 *.retry
+
+# env secrets
+.env

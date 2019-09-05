@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml-stylesheet type="text/xsl" href="contrib/xsl/modx.prosilver.en.xsl"?>
+<!--For security purposes, please check: http
+://www.phpbb.com/mods/ for the latest version of this MOD. Although MODs are checked before being allowed in the MODs Database there is no guarantee that there are no security problems within the MOD. No support will be given for MODs not found within the MODs Database which can be found at http://www.phpbb.com/mods/-->
+<mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.5.xsd">
+	<header>
+		<license>http://opensource.org/licenses/gpl-license.php GNU General Public License v2</license>
+
+		<title lang="en">Advanced Attach Watermark</title>
+		<title lang="de">Advanced Attach Watermark</title>
+
+		<description lang="en">This Mod inserts a watermark in Attachment Pics.</description>
+		<description lang="de">Diese Mod fügt ein Wasserzeichen in Attachment Bilder ein.</description>
+
+		<author-notes lang="en">Change in SQL the prefix phpbb4_ to yours.</author-notes>
+		<author-notes lang="en">Ändere in SQL den Präfix phpbb4_ in Deinen.</author-notes>
+
+		<author-group>
+			<author>
+				<realname>Jaques Laquardt</realname>
+				<username>4_seven</username>
+				<homepage>http://4seven.kilu.de/forum/phpbb3/</homepage>
+			</author>
+		</author-group>
+
+		<mod-version>0.1.4</mod-version>
+
+		<installation>
+			<level>intermediate</level>
+			<time>1800</time>
+			<target-version>3.0.7-PL1</target-version>
+		</installation>
+		
+		<link-group>
+			<link type="language" href="contrib/de.xml" lang="en">German Language</link>
+			<link type="language" href="contrib/de.xml" lang="de">Deutsche Sprache</link>
+			<link type="template" href="contrib/subsilver2.xml" lang="en">subsilver2</link>
+			<link type="template" href="contrib/subsilver2.xml" lang="de">subsilver2</link>
+		</link-group>
+
+		
+	</header>
+
+	<action-group>
+	
+		<sql dbms="mysql"><![CDATA[INSERT INTO phpbb_config (config_name, config_value, is_dynamic) VALUES
+('watermark_on_off','1','0'),
+('watermark_resize_only','0','0'),
+('watermark_resize_width','500','0'),
+('watermark_on_off_test','1','0'),
+('watermark_resize_only_test','1','0'),
+('watermark_resize_width_test','test 2','0'),
+('watermark_text_font','comic.ttf','0'),
+('watermark_resize','0','0'),
+('watermark_type','text','0'),
+('watermark_output_quality','100','0'),
+('watermark_transparency','50','0'),
+('watermark_text','user','0'),
+('watermark_text_color','EEEEEE','0'),
+('watermark_position','BM','0'),
+('watermark_backup_on_off','1','0'),
+('watermark_afterward_initial','0','0'),
+('watermark_convert_to_realname','1','0'),
+('watermark_convert_only','0','0'),
+('watermark_convert','0','0'),
+('watermark_text_sha_color','222222','0'),
+('watermark_sha_text_pos','50','0'),
+('watermark_text_cut','100','0'),
+('watermark_text_size','30','0'),
+('watermark_convert_high_only','0','0'),
+('watermark_convert_high','1','0'),
+('watermark_text_transparency','60','0'),
+('watermark_text_degree','0','0'),
+('watermark_backup_microtime','1258340469','0'),
+('watermark_img_sz_proc','35','0'),
+('watermark_img_max_size','3000x3000','0'),
+('watermark_text_ratio','40','0'),
+('watermark_special_on_off','1','0'),
+('watermark_special_groups','1,2,5,7','0');]]></sql>
+	
+		<copy>
+			<file from="root/files/*.*" to="files/*.*" />
+			<file from="root/highslide/*.*" to="highslide/*.*" />
+			<file from="root/images/*.*" to="images/*.*" />
+			<file from="root/adm/style/*.*" to="adm/style/*.*" />
+			<file from="root/includes/*.*" to="includes/*.*" />
+			<file from="root/language/en/*.*" to="language/en/*.*" />
+			<file from="root/styles/prosilver/template/*.*" to="styles/prosilver/template/*.*" />		
+		</copy>	
+		
+		<open src="posting.php">
+			<edit>
+				<find><![CDATA[add_form_key('posting');]]></find>
+				<action type="after-add"><![CDATA[// 4seven / Advanced Attach Watermark / 2010
+include($phpbb_root_path . 'includes/watermark/watermark_posting.' . $phpEx);
+// 4seven / Advanced Attach Watermark / 2010]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[// Start assigning vars for main posting page ...
+$template->assign_vars(array(]]></find>
+				<action type="after-add"><![CDATA[	// 4seven / Advanced Attach Watermark / 2010
+	'MAX_WM_SIZE'               => $config['watermark_img_max_size'] . 'px',
+	'WM_RESIZE_WIDTH'           => $config['watermark_resize_width'] . 'px',
+	'MEMORY_LIMIT'              => ini_get('memory_limit') . 'B',
+	'MEMORY_USAGE'              => round(memory_get_usage() / 1024000, 2) . 'MB',
+	'WM_TEXT_DEMO'              => utf8_normalize_nfc($config['watermark_text']),
+	'WM_TYPE_DEMO'              => utf8_normalize_nfc($config['watermark_type']),
+	'WM_GLOBAL_USER_ONOFF'      => (($config['watermark_type'] == 'text') && ($config['watermark_text_degree'] == 0) && (utf8_normalize_nfc($config['watermark_text']) == 'user') &&(($config['watermark_position'] == 'TL') or ($config['watermark_position'] == 'TM') or ($config['watermark_position'] == 'TR') or ($config['watermark_position'] == 'BL') or ($config['watermark_position'] == 'BM') or ($config['watermark_position'] == 'BR'))) ? $user->lang['WM_GLOBAL_USER_ONOFF'] : '',
+	'S_WM_GLOBAL_USER_ONOFF'    => (($config['watermark_type'] == 'text') && ($config['watermark_text_degree'] == 0) && (utf8_normalize_nfc($config['watermark_text']) == 'user') &&(($config['watermark_position'] == 'TL') or ($config['watermark_position'] == 'TM') or ($config['watermark_position'] == 'TR') or ($config['watermark_position'] == 'BL') or ($config['watermark_position'] == 'BM') or ($config['watermark_position'] == 'BR'))) ? true : false,
+	'S_WM_ONOFF'                => ($config['watermark_on_off'] == 1) ? true : false,
+	'S_WM_RESIZE_ONLY'          => ($config['watermark_resize_only'] == 1) ? true : false,
+	'S_WM_RESIZE'               => ($config['watermark_resize'] == 1) ? true : false,
+	'S_WM_CONVERT_ONLY'         => ($config['watermark_convert_only'] == 1) ? true : false,
+	'S_WM_CONVERT'              => ($config['watermark_convert'] == 1) ? true : false,
+	'S_WM_CONVERT_HIGH_ONLY'    => ($config['watermark_convert_high_only'] == 1) ? true : false,
+	'S_WM_CONVERT_HIGH'         => ($config['watermark_convert_high'] == 1) ? true : false,
+	'S_WM_SPECIAL_ON_OFF'       => ($config['watermark_special_on_off'] == 1) ? true : false,
+	'WM_ONOFF'                  => ($config['watermark_on_off'] == 1) ? $user->lang['WM_ONOFF'] : '',
+	'WM_RESIZE_ONLY'            => ($config['watermark_resize_only'] == 1) ? $user->lang['WM_RESIZE_ONLY'] : '',
+	'WM_RESIZE'                 => ($config['watermark_resize'] == 1) ? $user->lang['WM_RESIZE'] : '',
+	'WM_CONVERT_ONLY'           => ($config['watermark_convert_only'] == 1) ? $user->lang['WM_CONVERT_ONLY'] : '',
+	'WM_CONVERT'                => ($config['watermark_convert'] == 1) ? $user->lang['WM_CONVERT'] : '',
+	'WM_CONVERT_HIGH_ONLY'      => ($config['watermark_convert_high_only'] == 1) ? $user->lang['WM_CONVERT_HIGH_ONLY'] : '',
+	'WM_CONVERT_HIGH'           => ($config['watermark_convert_high'] == 1) ? $user->lang['WM_CONVERT_HIGH'] : '',
+	// 4seven / Advanced Attach Watermark / 2010]]></action>
+			</edit>			
+		</open>
+		
+		<open src="includes/functions_posting.php">
+			<edit>
+				<find><![CDATA[	// Do we have to create a thumbnail?
+	$filedata['thumbnail'] = ($cat_id == ATTACHMENT_CATEGORY_IMAGE && $config['img_create_thumbnail']) ? 1 : 0;]]></find>
+				<action type="replace-with"><![CDATA[	// 4seven / Advanced Attach Watermark / 2010
+	if(($config['watermark_resize'] == 1) || ($config['watermark_resize_only'] == 1)){
+	$filedata['thumbnail'] = ($cat_id == ATTACHMENT_CATEGORY_IMAGE && $config['img_create_thumbnail']) ? 0 : 1;}
+	else{
+	$filedata['thumbnail'] = ($cat_id == ATTACHMENT_CATEGORY_IMAGE && $config['img_create_thumbnail']) ? 1 : 0;}
+	// 4seven / Advanced Attach Watermark / 2010]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[$user->session_id : false);]]></find>
+				<action type="after-add"><![CDATA[			// 4seven / Advanced Attach Watermark / 2010
+			include($phpbb_root_path . 'includes/watermark/watermark_functions_posting.' . $phpEx);
+			// 4seven / Advanced Attach Watermark / 2010]]></action>
+			</edit>	
+			<edit>
+				<find><![CDATA[			$template->assign_block_vars('attach_row', array(]]></find>
+				<action type="after-add"><![CDATA[				// 4seven / Advanced Attach Watermark / 2010
+				'CONVERT_IMG'              => $convert_img,
+				'CONVERT_IMG_HIGH'         => $convert_img_high,
+				'CONVERT_IMG_HIGH_THUMB'   => $convert_img_high_thumb,
+				'S_CONVERT_NO_PIC_DATA'    => ($no_pic_data) ? true : false,
+				'S_EXISTS_IMG'             => file_exists('images/files/' . 'x_id_' . $user->data['user_id'] . '_' . $attach_row['attach_id'] . $attach_pic_dat),
+				'S_EXISTS_IMG_HIGH_THUMB'  => file_exists('images/files/' . 'x_id_high_thumb_' . $user->data['user_id'] . '_' . $attach_row['attach_id'] . $attach_pic_dat),
+				// 4seven / Advanced Attach Watermark / 2010]]></action>
+			</edit>				
+		</open>
+		
+		<open src="includes/message_parser.php">
+			<edit>
+				<find><![CDATA[						'attach_comment'=> $this->filename_data['filecomment'],
+					);]]></find>
+				<action type="after-add"><![CDATA[					// 4seven / Advanced Attach Watermark / 2010			
+					// let's start the watermark procedure  - check if it's a pic
+					if ((getimagesize($phpbb_root_path . 'files/' . $filedata['physical_filename']))
+					&&(((substr(strtolower($filedata['real_filename']), -4)) == '.jpg')
+					// || ((substr(strtolower($filedata['real_filename']), -5)) == '.jpeg')
+					|| ((substr(strtolower($filedata['real_filename']), -4)) == '.png')
+					|| ((substr(strtolower($filedata['real_filename']), -4)) == '.gif'))){
+					//  check if config exists	
+					if (preg_match('#^([0-9]{1,4})(x{1})([0-9]{1,4})$#', $config['watermark_img_max_size'])){ 
+					// check the size of given image
+					$new_water_size = getimagesize($phpbb_root_path . 'files/' . $filedata['physical_filename']);
+					$img_max_parts  = explode("x", $config['watermark_img_max_size']);
+					$to_big_size    = $img_max_parts[0]*$img_max_parts[1];					
+					if ($new_water_size[0]*$new_water_size[1] > $to_big_size){
+					$error[] = $user->lang['TO_BIG_FOR_WM_1'] . $new_water_size[0] . 'x' . $new_water_size[1] . $user->lang['TO_BIG_FOR_WM_2']	. $config['watermark_img_max_size'] . $user->lang['TO_BIG_FOR_WM_3'];}
+					else{
+					include($phpbb_root_path . 'includes/watermark/watermark_switchwork.' . $phpEx);}}} 
+					// 4seven / Advanced Attach Watermark / 2010]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							phpbb_unlink($row['physical_filename'], 'file');]]></find>
+				<action type="after-add"><![CDATA[							// 4seven / Advanced Attach Watermark / 2010
+							if (file_exists($phpbb_root_path . 'files/backup/' . $row['physical_filename'])){
+							unlink($phpbb_root_path . 'files/backup/' . $row['physical_filename']);}
+							// 4seven / Advanced Attach Watermark / 2010]]></action>
+			</edit>	
+			<edit>
+				<find><![CDATA[								phpbb_unlink($row['physical_filename'], 'thumbnail');]]></find>
+				<action type="after-add"><![CDATA[								// 4seven / Advanced Attach Watermark / 2010
+								if (file_exists($phpbb_root_path . 'files/backup/thumb_' . $row['physical_filename'])){
+								unlink($phpbb_root_path . 'files/backup/thumb_' . $row['physical_filename']);}
+								// 4seven / Advanced Attach Watermark / 2010]]></action>
+			</edit>	
+			<edit>
+				<find><![CDATA[							'attach_comment'=> $this->filename_data['filecomment'],
+						);]]></find>
+				<action type="after-add"><![CDATA[					// 4seven / Advanced Attach Watermark / 2010
+					// let's start the watermark procedure  - check if it's a pic
+					if ((getimagesize($phpbb_root_path . 'files/' . $filedata['physical_filename']))
+					&&(((substr(strtolower($filedata['real_filename']), -4)) == '.jpg')
+					// || ((substr(strtolower($filedata['real_filename']), -5)) == '.jpeg')					
+					|| ((substr(strtolower($filedata['real_filename']), -4)) == '.png')
+					|| ((substr(strtolower($filedata['real_filename']), -4)) == '.gif'))){
+					//  check if config exists	
+					if (preg_match('#^([0-9]{1,4})(x{1})([0-9]{1,4})$#', $config['watermark_img_max_size'])){ 
+					// check the size of given image
+					$new_water_size = getimagesize($phpbb_root_path . 'files/' . $filedata['physical_filename']);
+					$img_max_parts  = explode("x", $config['watermark_img_max_size']);
+					$to_big_size    = $img_max_parts[0]*$img_max_parts[1];					
+					if ($new_water_size[0]*$new_water_size[1] > $to_big_size){
+					$error[] = $user->lang['TO_BIG_FOR_WM_1'] . $new_water_size[0] . 'x' . $new_water_size[1] . $user->lang['TO_BIG_FOR_WM_2']	. $config['watermark_img_max_size'] . $user->lang['TO_BIG_FOR_WM_3'];}
+					else{
+					include($phpbb_root_path . 'includes/watermark/watermark_switchwork.' . $phpEx);}}} 
+					// 4seven / Advanced Attach Watermark / 2010]]></action>
+			</edit>				
+		</open>		
+	
+		<open src="language/en/posting.php">
+			<edit>
+				<find><![CDATA[$lang = array_merge($lang, array(]]></find>
+				<action type="before-add"><![CDATA[// 4seven / Advanced Attach Watermark / 2010
+include('mods/lang_watermark.' . $phpEx);
+// 4seven / Advanced Attach Watermark / 2010]]></action>
+			</edit>
+		</open>
+		
+		<open src="language/en/acp/common.php">
+			<edit>
+				<find><![CDATA[// Log Entries
+$lang = array_merge($lang, array(]]></find>
+				<action type="after-add"><![CDATA[// 4seven / Advanced Attach Watermark / 2010
+'LOG_CONFIG_WATERMARK_MAIN_CONFIG'      => '<strong>Watermark - Basics Configuration altered</strong>',
+'LOG_CONFIG_WATERMARK_SPECIALS_CONFIG'  => '<strong>Watermark - Specials Configuration altered</strong>',	
+// 4seven / Advanced Attach Watermark / 2010]]></action>
+			</edit>
+		</open>
+
+		<open src="styles/prosilver/template/editor.js">
+			<edit>
+				<find><![CDATA[function attach_inline(index, filename)
+{
+	insert_text('[attachment=' + index + ']' + filename + '[/attachment]');
+	document.forms[form_name].elements[text_name].focus();
+}]]></find>
+				<action type="after-add"><![CDATA[/* *
+* Add inline attachment at position
+*/
+function attach_inline_img_1(convert_filename_1)
+{
+	insert_text('[img]' + convert_filename_1 + '[/img]');
+	document.forms[form_name].elements[text_name].focus();
+}
+
+/**
+* Add inline attachment at position
+*/
+function attach_inline_slide_1(convert_filename_1)
+{
+	insert_text('[img_highslide=' + convert_filename_1 + ']');
+	document.forms[form_name].elements[text_name].focus();
+}
+
+/**
+* Add inline attachment at position
+*/
+function attach_inline_slide_2(convert_filename_2)
+{
+	insert_text(convert_filename_2 + '[/img_highslide]');
+	document.forms[form_name].elements[text_name].focus();
+}]]></action>
+			</edit>
+		</open>
+
+		<open src="styles/prosilver/template/overall_header.html">
+			<edit>
+				<find><![CDATA[</head>]]></find>
+				<action type="before-add"><![CDATA[<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+    // override Highslide settings here
+    // instead of editing the highslide.js file
+    hs.graphicsDir = 'highslide/graphics/';
+</script>]]></action>
+			</edit>
+		</open>
+
+		<open src="styles/prosilver/template/posting_attach_body.html">
+			<edit>
+				<find><![CDATA[	<fieldset class="fields2">]]></find>
+				<action type="after-add"><![CDATA[	<!-- IF S_WM_SPECIAL_ON_OFF -->
+	<!-- IF S_HIDE_GROUP_WM -->	
+	<!-- INCLUDE posting_wm_us_pr_body.html -->
+	<!-- ENDIF -->
+	<!-- ENDIF -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	</fieldset>]]></find>
+				<action type="before-add"><![CDATA[        <!-- INCLUDE posting_wm_switch_body.html -->]]></action>
+			</edit>
+		</open>
+	
+		<open src="styles/prosilver/template/posting_editor.html">
+			<edit>
+				<find><![CDATA[			<h3>{L_POSTED_ATTACHMENTS}</h3>]]></find>
+				<action type="after-add"><![CDATA[					<!-- IF S_INLINE_ATTACHMENT_OPTIONS -->
+					<!-- IF S_NO_INSERT_AS_IMG_BUTTON or S_NO_INSERT_AS_IMG_C_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_C_BUTTON -->
+					<div style="color:grey; ">{L_WM_NOTE_2}</div><hr />
+					<!-- ENDIF -->
+					<!-- ENDIF -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[<a href="{attach_row.U_VIEW_ATTACHMENT}" class="{S_CONTENT_FLOW_END}">{attach_row.FILENAME}</a>]]></find>
+				<action type="replace-with"><![CDATA[			<dd>
+			<!-- IF attach_row.S_CONVERT_NO_PIC_DATA and not S_TO_BIG_FOR_WATERMARK and (S_NO_INSERT_AS_IMG_BUTTON or S_NO_INSERT_AS_IMG_C_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_C_BUTTON) -->
+			<br />
+			<a class="genmed" href="{attach_row.U_VIEW_ATTACHMENT}" title="" >
+			<img style="max-height:100px;" src="<!-- IF attach_row.S_EXISTS_IMG and not attach_row.S_EXISTS_IMG_HIGH_THUMB -->{attach_row.CONVERT_IMG}<!-- ENDIF --><!-- IF attach_row.S_EXISTS_IMG_HIGH_THUMB -->{attach_row.CONVERT_IMG_HIGH_THUMB}<!-- ENDIF -->" alt="{attach_row.FILENAME}" /></a>&nbsp;&nbsp;{attach_row.FILENAME}
+			<p></p>
+			<!-- ELSE -->
+			<a href="{attach_row.U_VIEW_ATTACHMENT}" class="{S_CONTENT_FLOW_END}">{attach_row.FILENAME}</a>
+			<!-- ENDIF -->
+			</dd>]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[              <!-- IF S_INLINE_ATTACHMENT_OPTIONS --><input type="button" value="{L_PLACE_INLINE}" onclick="attach_inline({attach_row.ASSOC_INDEX}, '{attach_row.A_FILENAME}');" class="button2" />&nbsp; <!-- ENDIF -->
+					<input type="submit" name="delete_file[{attach_row.ASSOC_INDEX}]" value="{L_DELETE_FILE}" class="button2" />]]></find>
+				<action type="replace-with"><![CDATA[              <!-- IF S_INLINE_ATTACHMENT_OPTIONS -->
+			 
+              <input type="button" value="{L_PLACE_INLINE} <!-- IF attach_row.S_CONVERT_NO_PIC_DATA --><!-- IF S_TO_BIG_FOR_WATERMARK --><!-- ELSE --><!-- IF attach_row.S_CONVERT_NO_PIC_DATA and not S_WATERMARK_ON --><!-- IF S_NO_INSERT_AS or S_NO_INSERT_RESIZE_ONLY -->{L_MINUS_WM}<!-- ELSE --><!-- IF S_WATERMARK_ON or S_NO_INSERT_RESIZE -->{L_PLUS_WM}<!-- ENDIF --><!-- ENDIF --><!-- ENDIF --><!-- IF  S_WATERMARK_ON -->{L_PLUS_WM}<!-- ENDIF --><!-- ENDIF --><!-- ENDIF -->" onclick="attach_inline({attach_row.ASSOC_INDEX}, '{attach_row.A_FILENAME}');" class="button2" <!-- IF  not S_TO_BIG_FOR_WATERMARK --><!-- IF attach_row.S_CONVERT_NO_PIC_DATA --><!-- IF S_NO_INSERT_AS -->title="{L_WITHOUT_WATERMARK_TITLE}"<!-- ENDIF --><!-- ENDIF --><!-- ENDIF --> />&nbsp;
+           
+              <!-- IF not S_TO_BIG_FOR_WATERMARK -->
+              <!-- IF attach_row.S_CONVERT_NO_PIC_DATA -->
+              <!-- IF S_NO_INSERT_AS_IMG_BUTTON or S_NO_INSERT_AS_IMG_C_BUTTON -->
+              <input type="button" onclick="attach_inline_img_1('{attach_row.CONVERT_IMG}')" value="{L_INSERT_AS_IMG} <!-- IF S_NO_INSERT_AS_IMG_C_BUTTON -->{L_PLUS_WM}<!-- ELSE -->{L_MINUS_WM}<!-- ENDIF -->" class="button2" title="{L_DEL_AFTER_INSERT_1_TITLE}" />&nbsp;
+              <!-- ENDIF -->
+
+              <!-- IF S_NO_INSERT_AS_HIGHSLIDE_BUTTON or S_NO_INSERT_AS_HIGHSLIDE_C_BUTTON -->
+              <input type="button" onclick="attach_inline_slide_1('{attach_row.CONVERT_IMG_HIGH_THUMB}'); attach_inline_slide_2('{attach_row.CONVERT_IMG_HIGH}')" value="{L_INSERT_AS_SLIDE} <!-- IF S_NO_INSERT_AS_HIGHSLIDE_C_BUTTON -->{L_PLUS_WM}<!-- ELSE -->{L_MINUS_WM}<!-- ENDIF -->" class="button2" title="{L_DEL_AFTER_INSERT_2_TITLE}" />&nbsp;
+              <!-- ENDIF -->
+              <!-- ENDIF -->
+              <!-- ENDIF -->
+            
+              <!-- ENDIF -->
+			   
+              <input type="submit" name="delete_file[{attach_row.ASSOC_INDEX}]" value="{L_DELETE_FILE}" class="button2" <!-- IF  not S_TO_BIG_FOR_WATERMARK --><!-- IF attach_row.S_CONVERT_NO_PIC_DATA --><!-- IF S_NO_INSERT_AS -->title="{L_NO_DEL_TITLE}"<!-- ENDIF --><!-- ENDIF --><!-- ENDIF --> />]]></action>
+			</edit>	
+		</open>
+
+		<diy-instructions lang="en"><![CDATA[#
+#-----[ ADD FOLLOWING CHMOD VIA FTP TO FOLDERS AND FILES WITHIN ]--------
+#
+
+files > chmod 777 (Hint: The Attachments (also the pics) returns after Upload to chmod 666 ;)
+files/backup > chmod 777
+images/files  > chmod 777
+includes/watermark > chmod 755
+includes/watermark/fonts > chmod 777
+includes/watermark/images > chmod 777
+		
+#
+#-----[ FINAL STEPS 1 (en) ]------------------------------------------
+#
+
+Make BBCode
+
+BBCode Usage
+[img_highslide={URL1}]{URL2}[/img_highslide]
+
+HTML replacement
+<a class="highslide" onclick="return hs.expand(this)" href="{URL2}"><img  src="{URL1}" title="" alt="" /></a>
+
+#
+#-----[ FINAL STEPS 2 (en)]------------------------------------------
+#
+
+Go to ACP > SYSTEM > Module management > Administration Control Panel
+ 
+> Click on '.MODs'
+ 
+> Enter in Textfield: Watermark 
+
+> Find and click on Add Module:
+
+Module type: Category
+Parent: .MOD
+Module enabled: Yes
+
+> Submit
+
+> Click on 'Watermark'
+
+> Find 'Basic' und click on 'Add modul'
+> Conform with 'Yes'
+> Find 'Special' und click on 'Add modul'
+> Conform with 'Yes'
+
+> Clear all Board-, Style- and Browser-Caches
+
+#
+#-----[ NOTE 1 (en)]------------------------------------------
+#
+
+The Graphics..
+
+includes/watermark/images/watermark.png
+includes/watermark/afterward/watermark.png
+
+..must be identical and sized should be 500 x 500 px -> 1000 x 1000 px.
+
+Format: *.png / 24 bit / transparent
+
+#
+#-----[ NOTE 2 (en)]------------------------------------------
+#
+
+Font-Files must be upload lowercase:
+
+> includes/watermark/fonts/arial.ttf and not > includes/watermark/fonts/Arial.TTF etc..
+
+#
+#-----[ NOTE 3 (en)]------------------------------------------
+#
+
+For the "Attachment Resize Function" must be following activated
+ 
+Posting - Attachments  - Attachment Settings 
+
+Create thumbnail:
+Create a thumbnail in all possible situations.  [x]Yes [ ]No
+
+#
+#-----[ NOTE 4 (en)]------------------------------------------
+#
+
+Clear after install all Board-, Style- and Browser-Caches
+
+#
+#-----[ NOTE 5 (en)]------------------------------------------
+#
+
+If u get a memory_limit error bcs. of too big pics (limits by server) try the following
+
+Open
+
+.htaccess
+
+Enter at the begin:
+
+php_value memory_limit 128M
+
+This will work for pics ~ 3000 x 3000 px
+
+or
+
+php_value memory_limit 144M
+
+This will work for pics ~ 4200 x 4200 px
+
+Reduce or increase slowly in 4M Steps.
+
+-----------
+
+To check out how high u can go make a file memory.php
+
+and load it up into forum root
+
+<?php
+$y=ini_get('memory_limit');
+echo $y;
+?>
+
+and call the file in browser.
+
+> increase the .htaccess higher as this file displays make no sense
+> in this case reduce slowly till the summery change
+
+#
+#-----[ EoM ]------------------------------------------
+#]]></diy-instructions>
+
+	<diy-instructions lang="en"><![CDATA[#
+#-----[ VERGEBE VIA FTP CHMOD FÜR VERZEICHNISSE UND DIE DATEIEN DARIN ]--
+#
+
+files > chmod 777 (Hinweis: Die Attachments (auch die Bilder) haben nach dem Upload wieder chmod 666 ;)
+files/backup > chmod 777
+images/files  > chmod 777
+includes/watermark > chmod 755
+includes/watermark/images > chmod 777
+		
+#
+#-----[ LETZTE SCHRITTE 1 (de) ]------------------------------------------
+#
+
+BBCode erstellen
+
+BBCode-Benutzung
+[img_highslide={URL1}]{URL2}[/img_highslide]
+
+Html Ersetzung
+<a class="highslide" onclick="return hs.expand(this)" href="{URL2}"><img  src="{URL1}" title="" alt="" /></a>
+
+#
+#-----[ LETZTE SCHRITTE 2 (de)]------------------------------------------
+#
+
+Gehe in das ACP > SYSTEM > Modul-Konfiguration > Administrations-Bereich
+ 
+> Klicke auf 'Mods'
+ 
+> Gebe in das Textfeld ein: Watermark 
+> Klick dann auf 'Neues Modul erstellen'
+
+Modul-Typ: Kategorie
+Übergeordnet: Mods
+Modul aktiviert: Ja
+
+> Absenden
+
+> Klick auf 'Watermark'
+
+> Finde 'Basic' und Klicke auf 'Modul hinzufügen'
+> Bestätige mit 'Ja'
+> Finde 'Special' und Klicke auf 'Modul hinzufügen'
+> Bestätige mit 'Ja'
+
+> Leere alle Foren- and Browser-Caches
+
+#
+#-----[ HINWEIS 1 (de)]------------------------------------------
+#
+
+Die Grafiken..
+
+includes/watermark/images/watermark.png
+includes/watermark/afterward/watermark.png
+
+..sollten identisch sein und zwischen 500 x 500 px -> 1000 x 1000 px groß sein.
+
+Format: *.png / 24 bit / transparent
+
+#
+#-----[ HINWEIS 2 (de)]------------------------------------------
+#
+
+Font-Dateien sind kleingeschrieben hochzuladen:
+
+> includes/watermark/fonts/arial.ttf and not > includes/watermark/fonts/Arial.TTF etc..
+
+#
+#-----[ HINWEIS 3 (de)]------------------------------------------
+#
+
+Für die "Attachment Resize Funktion" muss unter
+ 
+Beiträge - Dateianhang-Konfiguration - Dateianhänge
+
+Vorschaubild erstellen:
+Vorschaubild in allen möglichen Fällen erstellen.  [x]Ja [ ]Nein
+
+aktiviert sein
+
+#
+#-----[ HINWEIS 4 (de)]------------------------------------------
+#
+
+Leere nach der Installation alle Board-, Style- und Browser-Caches
+
+#
+#-----[ HINWEIS 5 (de)]------------------------------------------
+#
+
+Wenn Du eine memory_limit Fehlermeldung wegen zu großen Bildern bekommst (Server Limitierung) versuche folgendes
+
+Öffne
+
+.htaccess
+
+Füge am Beginn der Datei ein:
+
+php_value memory_limit 128M
+
+Das funktioniert für Bilder ~ 3000 x 3000 px
+
+oder
+
+php_value memory_limit 144M
+
+Das funktioniert für Bilder~ 4200 x 4200 px
+
+Reduziere oder erhöhe langsam in 4M Schritten.
+
+-----------
+
+Um zu überprüfen, wie hoch Du gehen kannst, erstelle eine memory.php 
+
+mit folgendem Inhalt im Forum root
+
+<?php
+$y=ini_get('memory_limit');
+echo $y;
+?>
+
+und rufe die Datei im Browser auf.
+
+> Die Werte in der .htaccess mehr zu erhöhen, als die memory.php anzeigt, macht keinen Sinn
+> In dem Falle reduziere langsam, bis sich der Wert verändert und bleibe etwas unter dem Maximum
+
+#
+#-----[ EoM ]------------------------------------------
+#]]></diy-instructions>
+
+	</action-group>
+</mod>
