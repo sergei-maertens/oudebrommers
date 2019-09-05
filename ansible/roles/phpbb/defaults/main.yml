@@ -1,3 +1,9 @@
 ---
 
 forum_url_path: /phpbb3
+
+phpbb3_image: oudebrommers/phpbb3:latest
+
+phpbb3_cache_volume: "{{ domain }}-phpbb3-cache"
+phpbb3_files_volume: "{{ domain }}-phpbb3-files"
+phpbb3_images_volume: "{{ domain }}-phpbb3-images"

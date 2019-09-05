@@ -2,4 +2,11 @@
 
 # Create the volumes needed for the phpBB3 board
 
-- name:
+- name: Creat the phpBB3 volumes
+  remote_user: root
+  docker_volume:
+    name: "{{ item }}"
+  with_items:
+    - "{{ phpbb3_cache_volume }}"
+    - "{{ phpbb3_files_volume }}"
+    - "{{ phpbb3_images_volume }}"

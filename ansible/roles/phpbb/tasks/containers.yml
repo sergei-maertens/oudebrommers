@@ -1,1 +1,22 @@
 ---
+
+- name: Ensure the phpBB3 container runs
+  remote_user: root
+  docker_container:
+    name: "phpbb3-{{ domain }}"
+    image: "{{ phpbb3_image }}"
+    state: started
+    restart: no
+    restart_policy: always
+    env:
+      PHPBB3_DB_HOST: "{{ db.host }}"
+      PHPBB3_DB_USER: "{{ db[domain].forum.user }}"
+      PHPBB3_DB_PASSWORD: "{{ db[domain].forum.password }}"
+      PHPBB3_DB_NAME: "{{ db[domain].forum.name }}"
+      WP_API_KEY: "{{ wp_api_key }}"
+    volumes:
+      - "{{ phpbb3_cache_volume }}:/var/www/html/phpbb3/cache"
+      - "{{ phpbb3_files_volume }}:/var/www/html/phpbb3/files"
+      - "{{ phpbb3_images_volume }}:/var/www/html/phpbb3/images"
+    ports:
+      - "127.0.0.1:{{ port_mapping[domain].phpbb3_to }}:80"
