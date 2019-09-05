@@ -1,3 +1,5 @@
 code/phpbb3/cache/*.php
 code/phpbb3/files
+!code/phpbb3/files/.htaccess
 code/phpbb3/images
+!code/phpbb3/images/.htaccess

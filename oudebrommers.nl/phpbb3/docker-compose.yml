@@ -15,6 +15,7 @@ services:
 
   phpbb3:
     build: .
+    image: oudebrommers/phpbb3
     ports:
       - "9000:80"
     environment:
@@ -23,8 +24,15 @@ services:
       PHPBB3_DB_PASSWORD: letmein
       PHPBB3_DB_NAME: oudebro
       WP_API_KEY: ${WP_API_KEY:-}
+    volumes:
+      - cache:/var/www/html/phpbb3/cache
+      - uploaded_files:/var/www/html/phpbb3/files
+      - uploaded_images:/var/www/html/phpbb3/images
     depends_on:
       - db
 
 volumes:
   mysql_data:
+  cache:
+  uploaded_files:
+  uploaded_images:

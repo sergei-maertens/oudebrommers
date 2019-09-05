@@ -1,6 +1,6 @@
 <?php
 
-$dbms = 'mysql';
+$dbms = 'mysqli';
 $dbhost = getenv('PHPBB3_DB_HOST');
 $dbport = getenv('PHPBB#_DB_PORT') || '';
 $dbuser = getenv('PHPBB3_DB_USER');
