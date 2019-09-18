@@ -5,8 +5,10 @@
 .vault_pass*.txt
 *.retry
 
-# docker images
+# docker images & runtime data
 images/
+dbdumbs/
+volumes/
 
 # env secrets
 .env
