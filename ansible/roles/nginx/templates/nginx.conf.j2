@@ -4,13 +4,33 @@ server {
     listen 80;
     server_name {{ server[domain].name }}
                 {{ server[domain].aliases|join(' ') }};
-    return 301 https://{{ server[domain].name }}$request_uri;
+    return 302 https://{{ server[domain].name }}$request_uri;
 }
+
+# redirects to canonical address
+{% for alias in server[domain].aliases %}
+server {
+    listen 443;
+    server_name {{ alias }};
+
+    ssl on;
+    ssl_certificate /etc/letsencrypt/live/{{ alias }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ alias }}/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
+    ssl_dhparam /etc/ssl/certs/dhparam.pem;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !RC4 ";
+
+    # # 180 days
+    # add_header Strict-Transport-Security "max-age=15552000; includeSubdomains; preload";
+
+    return 302 https://{{ server[domain].name }}$request_uri;
+}
+{% endfor %}
 
 server {
     listen       443;
-    server_name {{ server[domain].name }}
-                {{ server[domain].aliases|join(' ') }};
+    server_name {{ server[domain].name }};
     error_log /var/log/nginx/{{ domain }}.{{ env }}/error.log warn;
     access_log  /var/log/nginx/{{ domain }}.{{ env }}/access.log main;
 
@@ -61,30 +81,6 @@ server {
         proxy_pass http://127.0.0.1:{{ port_mapping[domain].to }};
         proxy_redirect off;
     }
-
-    {% if forum_url_path is defined %}
-    location {{ forum_url_path }} {
-        include proxy_params;
-        proxy_pass http://127.0.0.1:8080;  # proxy to apache
-    }
-    {% endif %}
-
-    # location /favicon.ico {
-    #     alias {{ docroot }}/favicon.ico;
-    #     expires max;
-    # }
-
-    # location /static/ {
-    #     expires max;
-    #     root {{ ansible_env.HOME }}/django/{{ env }};
-    #     access_log  /var/log/nginx/{{ domain }}.{{ env }}/static.access.log;
-    # }
-
-    # location /media/ {
-    #     expires 30d;
-    #     root {{ ansible_env.HOME }}/django/{{ env }};
-    #     access_log  /var/log/nginx/{{ domain }}.{{ env }}/media.access.log;
-    # }
 
     error_page 503 @maintenance;
     location @maintenance {

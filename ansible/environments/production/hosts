@@ -1,6 +1,4 @@
-[web]
-oudebrommers.nl
-
 [simple-wp]
+oudebrommers.nl domain=oudebrommers.nl
 bromfietsshow.nl domain=bromfietsshow.nl
 beriniclub.nl domain=beriniclub.nl
