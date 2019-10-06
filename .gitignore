@@ -7,7 +7,7 @@
 
 # docker images & runtime data
 images/
-dbdumbs/
+dbdumps/
 volumes/
 
 # env secrets

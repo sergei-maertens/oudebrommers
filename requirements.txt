@@ -12,6 +12,7 @@ click==7.0                # via pip-tools
 cryptography==2.5         # via ansible, paramiko
 jinja2==2.10              # via ansible
 markupsafe==1.1.1         # via jinja2
+mysqlclient==1.4.4
 paramiko==2.4.2           # via ansible
 pip-tools==3.4.0
 pyasn1==0.4.5             # via paramiko
