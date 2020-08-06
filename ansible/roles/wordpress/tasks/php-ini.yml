@@ -1,0 +1,11 @@
+---
+
+- name: Ensure the target php ini dir exists
+  file:
+    path: "{{ wp_home_dir }}/{{ domain }}"
+    state: directory
+
+- name: Template out the php.ini config to mount in the container
+  template:
+    src: php.ini.j2
+    dest: "{{ wp_home_dir }}/{{ domain }}/php.ini"

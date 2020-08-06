@@ -20,6 +20,7 @@
       WORDPRESS_DB_NAME: "{{ db[domain].name }}"
     volumes:
       - "{{ public_html_volume_name }}:/var/www/html/"
+      - "{{ wp_home_dir }}/{{ domain }}/php.ini:{{ php_ini_dir }}/custom.ini"
     ports:
       - "127.0.0.1:{{ port_mapping[domain].to }}:{{ port_mapping[domain].from }}"
   remote_user: root

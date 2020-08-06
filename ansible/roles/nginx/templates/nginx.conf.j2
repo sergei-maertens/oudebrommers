@@ -7,30 +7,10 @@ server {
     return 302 https://{{ server[domain].name }}$request_uri;
 }
 
-# redirects to canonical address
-{% for alias in server[domain].aliases %}
-server {
-    listen 443;
-    server_name {{ alias }};
-
-    ssl on;
-    ssl_certificate /etc/letsencrypt/live/{{ alias }}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/{{ alias }}/privkey.pem;
-    ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
-    ssl_dhparam /etc/ssl/certs/dhparam.pem;
-    ssl_prefer_server_ciphers on;
-    ssl_ciphers "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !RC4 ";
-
-    # # 180 days
-    # add_header Strict-Transport-Security "max-age=15552000; includeSubdomains; preload";
-
-    return 302 https://{{ server[domain].name }}$request_uri;
-}
-{% endfor %}
-
 server {
     listen       443;
-    server_name {{ server[domain].name }};
+    server_name {{ server[domain].name }}
+                {{ server[domain].aliases|join(' ') }};
     error_log /var/log/nginx/{{ domain }}.{{ env }}/error.log warn;
     access_log  /var/log/nginx/{{ domain }}.{{ env }}/access.log main;
 
@@ -75,6 +55,8 @@ server {
     }
 
     location / {
+        client_max_body_size {{ wp_upload_max_filesize|lower }};
+
         include proxy_params;
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Forwarded-Server $host;
