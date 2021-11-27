@@ -1,3 +1,3 @@
 [simple-wp]
-bromfietsshow.nl domain=bromfietsshow.nl
-beriniclub.nl domain=beriniclub.nl
+bromfietsshow.nl domain=bromfietsshow.nl ansible_python_interpreter=/usr/bin/python3
+beriniclub.nl domain=beriniclub.nl ansible_python_interpreter=/usr/bin/python3
